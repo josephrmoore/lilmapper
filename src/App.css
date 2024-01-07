@@ -1,38 +1,906 @@
-.App {
-  text-align: center;
+/* Reset */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td, button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* emember to define focus styles! */
+:focus {
+  outline: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* emember to highlight inserts somehow! */
+ins {
+  text-decoration: none;
+}
+del {
+  text-decoration: line-through;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
-.App-link {
-  color: #61dafb;
+article,aside,canvas,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section,summary, video {
+  display:block;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+/*  - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+
+/* GENERAL STYLES */
+
+
+html {
+	font-size: 100%;
 }
+
+.toggletext {
+	background-color: #333;
+	padding: 10px;
+	border: 4px solid #eee;
+	font-weight: bold;
+	color: #fff;
+}
+
+
+canvas {
+	position: absolute;
+    top: 0;
+    left: 0;
+    margin: 20px;
+    width: 85%;
+    height: 100%;
+    z-index: 30;
+    pointer-events: none;
+}
+
+/* MAP LEVEL */
+
+.map {
+	position: relative;
+/*
+    width: 90em;
+    height: 40em;
+*/
+	width: 85%;
+	height: 100%;
+    min-height: 500px;
+    max-width: 2048px;
+    min-width: 800px;
+ /*   border: 5px solid #aaa; */
+    margin: 20px;
+    background-color: #000;
+    overflow: hidden;
+    z-index: 3;
+}
+
+.map.hidelabels .zone h2 {
+	display: none;
+}
+
+/* ZONE LEVEL */
+
+
+
+.zone {
+    display: inline-block;
+    position: absolute;
+    color: #fff;
+	transition: all 0.3s ease;
+	z-index: 5;
+}
+
+/*
+.mapview .zone {
+	transform: translateY(0px);
+}
+
+.zoneview .zone {
+	transform: translateY(-100px);
+}
+*/
+
+.zone0 {
+	width: 9.7em;
+    height: 4.3em;
+}
+.zone1 {
+    width: 5em;
+    height: 5.2em;
+}
+.zone2 {
+    height: 11em;
+    width: 8.2em;
+}
+.zone3 {
+	width: 4.5em;
+	height: 1.3em;
+}
+.zone4 {
+    width: 7.8em;
+    height: 5em;
+}
+.zone5 {
+    width: 4.5em;
+    height: 1.3em;
+}
+.zone6 {
+	width: 5em;
+    height: 5.2em;
+}
+.zone7 {
+    width: 4.5em;
+    height: 1.3em;
+}
+.zone8 {
+	padding: 1em;
+}
+.zone9 {
+	padding: 1em;
+}
+.zone10 {
+	padding: 1em;
+}
+
+
+	/* ZONE LABELS */
+
+.zone h2 {
+    text-align: center;
+    font-weight: normal;
+    opacity: 0.6;
+    position: absolute
+}
+
+
+.zone0 h2 {
+	color: rgb(248, 209, 50);
+	top: -1.3em;
+	left: 3.2em;
+}
+
+.zone1 h2 {
+	transform: rotate(-90deg);
+	left: -4.3em;
+	top: 1.9em;
+	color: rgb(148, 240, 115);
+	
+}
+
+.zone2 h2 {
+	transform: rotate(-90deg);
+	left: -4.3em;
+	top: 5.4em;
+	color: rgb(208, 84, 168);
+}
+
+.zone3 h2 {
+	color: rgb(36, 130, 93);
+	top: -1.95em;
+	left: -1.3em;	
+	min-width: 7em;
+}
+
+
+.zone4 h2 {
+    top: 4.4em;
+    left: 2.6em;
+	color: rgb(255, 128, 88);
+}
+
+.zone5 h2 {
+	transform: rotate(90deg);
+    left: 2.3em;
+    top: -0.1em;
+	min-width: 7em;
+	color: rgb(197, 82, 81);
+}
+
+.zone6 h2 {
+	top: -2.3em;
+	color: rgb(153, 203, 254);
+	min-width: 6em;
+    left: -0.65em;
+}
+
+.zone7 h2 {
+	transform: rotate(90deg);
+	left: 2.3em;
+    top: -0.1em;
+	min-width: 7em;
+	color: rgb(133, 133, 247);
+}
+
+.zone8 h2 {
+    top: 1em;
+    left: 3em;
+	color: rgb(151, 151, 151);
+}
+
+.zone9 h2 {
+    top: 2.6em;
+    left: -0.95em;
+	color: rgb(103, 103, 103);
+}
+
+.zone10 h2 {
+	left: -2.3em;
+    top: -0.65em;
+    color: rgb(212, 212, 212);
+}
+
+	/* ZONE POSITIONS in MAPVIEW */
+
+.mapview .zone0 {
+    top: 10%;
+    left: 30%;
+}
+
+.mapview .zone1 {
+    left: 16%;
+    top: 18%;
+}
+
+.mapview .zone2 {
+    left: 31%;
+    top: 25%;
+}
+
+.mapview .zone3 {
+	left: 54%;
+    top: 10%;
+}
+
+.mapview .zone4 {
+    left: 46%;
+    top: 58.5%;
+}
+
+.mapview .zone5 {
+    left: 64%;
+    top: 67%;
+}
+
+.mapview .zone6 {
+    left: 61%;
+    top: 26%;
+}
+
+.mapview .zone7 {
+	left: 76%;
+    top: 30%;
+}
+
+.mapview .zone8 {
+    left: 44.3%;
+    top: 47%;
+}
+
+.mapview .zone9 {
+	left: 46.2%;
+    top: 76%;
+}
+
+.mapview .zone10 {
+    left: 25%;
+    top: 18%;
+}
+
+
+
+	/* ZONE POSITION in ZONEVIEW for ELEMENTS OFFSCREEN */
+
+
+.zoneview .zone0 {
+    top: -10em;
+    left: 40em;
+}
+
+.zoneview .zone1 {
+    left: -10em;
+    top: 9em;
+}
+
+.zoneview .zone2 {
+    left: -15em;
+    top: 16em;
+}
+
+.zoneview .zone3 {
+	left: 75.2em;
+    top: -10em;
+}
+
+.zoneview .zone4 {
+    left: 30em;
+    top: 51.6em;
+}
+
+.zoneview .zone5 {
+	left: 62em;
+    top: 51.5em;
+}
+
+.zoneview .zone6 {
+    left: 109em;
+    top: 5em;
+}
+
+.zoneview .zone7 {
+    left: 106em;
+    top: 13.6em;
+}
+
+.zoneview .zone8 {
+    left: -10em;
+    top: 21.6em;
+}
+
+.zoneview .zone9 {
+    left: 53.25em;
+    top: 50em;
+}
+
+.zoneview .zone10 {
+    left: -10em;
+    top: 7em;
+}
+
+
+
+/*
+.zoneview .zone {
+	display: none;
+}
+*/
+
+
+	/* ZONE POSITION in ZONEVIEW for ELEMENTS ON SCREEN */
+
+.zoneview .mainzone {
+	display: block;
+    left: 45.5%;
+    top: 30%;
+    scale: 1.0;
+}
+
+.zoneview .sidezone1 {
+	display: block;
+	top: 10%;
+	left: 10%;
+	scale: 1.0;
+}
+.zoneview .sidezone2 {
+	display: block;
+	top: 32.67%;
+	left: 10%;
+	scale: 1.0;
+}
+.zoneview .sidezone3 {
+	display: block;
+	top: 72.2%;
+	left: 10%;
+	scale: 1.0;
+}
+.zoneview .sidezone4 {
+	display: block;
+	top: 10%;
+	left: 80%;
+	scale: 1.0;
+
+}
+.zoneview .sidezone5 {
+	display: block;
+	top: 46.67%;
+	left: 80%;
+	scale: 1.0;
+}
+.zoneview .sidezone6 {
+	display: block;
+	top: 72.2%;
+	left: 80%;
+	scale: 1.0;
+}
+
+
+
+/* PORTAL LEVEL */
+
+.portal {
+    min-height: 1.22em;
+    min-width: 1.22em;
+    border-radius: 100%;
+    outline: 0.065em solid #000;
+    display: inline-block;
+/*	background: linear-gradient( 90deg, blue 50%, red 51% ); */
+	position: relative;
+	z-index: 10;
+}
+
+.portal::before {
+	content: '';
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+.portal::after {
+	content: '';
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.portal.connected:hover {
+	cursor: default;
+}
+
+
+.portal.clicked {
+	background-color: yellow;
+	opacity: 0.8;
+}
+
+
+.portal:hover {
+	cursor: pointer;
+}
+
+	/* PORTAL OUTLINE */
+
+.zone0 .portal {outline-color: rgb(248, 209, 50);}
+.zone1 .portal {outline-color: rgb(148, 240, 115);}
+.zone2 .portal {outline-color: rgb(208, 84, 168);}
+.zone3 .portal {outline-color: rgb(36, 130, 93);}
+.zone4 .portal {outline-color: rgb(255, 128, 88);}
+.zone5 .portal {outline-color: rgb(197, 82, 81);}
+.zone6 .portal {outline-color: rgb(153, 203, 254);}
+.zone7 .portal {outline-color: rgb(133, 133, 247);}
+.zone8 .portal {outline-color: rgb(151, 151, 151);}
+.zone9 .portal {outline-color: rgb(103, 103, 103);}
+.zone10 .portal {outline-color: rgb(212, 212, 212);}
+
+
+
+.zone0 .portal.connected {background-color: rgb(248, 209, 50);}
+.zone1 .portal.connected {background-color: rgb(148, 240, 115);}
+.zone2 .portal.connected {background-color: rgb(208, 84, 168);}
+.zone3 .portal.connected {background-color: rgb(36, 130, 93);}
+.zone4 .portal.connected {background-color: rgb(255, 128, 88);}
+.zone5 .portal.connected {background-color: rgb(197, 82, 81);}
+.zone6 .portal.connected {background-color: rgb(153, 203, 254);}
+.zone7 .portal.connected {background-color: rgb(133, 133, 247);}
+.zone8 .portal.connected {background-color: rgb(151, 151, 151);}
+.zone9 .portal.connected {background-color: rgb(103, 103, 103);}
+.zone10 .portal.connected {background-color: rgb(212, 212, 212);}
+
+	/*  PORTAL SPACING  */
+		/* Crateria */
+
+.zone0 .portal {
+	top: 0em;
+}
+.zone0 .portal0 {
+	left: 0em;
+}
+.zone0 .portal1 {
+	left: 0.7em;
+}
+.zone0 .portal2 {
+	left: 1.9em;
+	top: 2.6em;
+}
+.zone0 .portal3 {
+	left: 3em;
+	top: 1.3em;
+}
+.zone0 .portal4 {
+	left: 3.5em;
+}
+
+		/* Green Brin */
+
+.zone1 .portal0 {
+	left: 0em;
+}
+.zone1 .portal1 {
+	left: 0.65em;
+	top: 1.95em;
+}
+.zone1 .portal2 {
+	left: 1.3em;
+	top: 3.9em;
+}
+
+		/* Red Brin */
+
+.zone2 .portal0 {
+	top: 4.75em;
+}
+.zone2 .portal1 {
+	left: 0.3em;
+	top: 2.6em;
+}
+.zone2 .portal2 {
+    left: -1em;
+    top: 0.7em;
+}
+.zone2 .portal3 {
+    left: -1.85em;
+    top: 6.4em;
+}
+.zone2 .portal4 {
+    top: 5.2em;
+    left: -1.05em;
+}
+.zone2 .portal5 {
+    left: -2.3em;
+    top: 7.9em;
+}
+
+		/* Wrecked Ship */
+
+.zone3 .portal0 {
+	left: 0em;
+}
+.zone3 .portal1 {
+	left: 2em;
+}
+
+		/* Upper Norfair */
+
+.zone4 .portal0 {
+	left: 0em;
+}
+.zone4 .portal1 {
+	left: 1.3em;
+}
+.zone4 .portal2 {
+	left: -1.25em;
+	top: 3.9em;
+}
+.zone4 .portal3 {
+	left: 2.6em;
+}
+.zone4 .portal4 {
+	left: 1.3em;
+	top: 2.6em;
+}
+
+		/* Lower Norfair */
+
+.zone5 .portal0 {
+	left: 0em;
+}
+.zone5 .portal1 {
+	left: 2em;
+}
+
+
+		/* West Maridia */
+
+.zone6 .portal0 {
+	left: 0em;
+}
+.zone6 .portal1 {
+    left: -1.3em;
+    top: 3.9em;
+}
+.zone6 .portal2 {
+    left: 2em;
+    top: 1.3em;
+}
+.zone6 .portal3 {
+    top: 3.9em;
+    left: 0.8em;
+}
+
+		/* East Maridia */
+
+.zone7 .portal0 {
+	left: 0em;
+}
+.zone7 .portal1 {
+	left: 2em;
+}
+
+
+	/* STRUCTURAL LINE COLORS */
+
+.zone0 .portal::before {border-color: rgb(248, 209, 50);}
+.zone1 .portal::before {border-color: rgb(148, 240, 115);}
+.zone2 .portal::before {border-color: rgb(208, 84, 168);}
+.zone3 .portal::before {border-color: rgb(36, 130, 93);}
+.zone4 .portal::before {border-color: rgb(255, 128, 88);}
+.zone5 .portal::before {border-color: rgb(197, 82, 81);}
+.zone6 .portal::before {border-color: rgb(153, 203, 254);}
+.zone7 .portal::before {border-color: rgb(133, 133, 247);}
+.zone8 .portal::before {border-color: rgb(151, 151, 151);}
+.zone9 .portal::before {border-color: rgb(103, 103, 103);}
+.zone10 .portal::before {border-color: rgb(212, 212, 212);}
+
+.zone0 .portal::after {border-color: rgb(248, 209, 50);}
+.zone1 .portal::after {border-color: rgb(148, 240, 115);}
+.zone2 .portal::after {border-color: rgb(208, 84, 168);}
+.zone3 .portal::after {border-color: rgb(36, 130, 93);}
+.zone4 .portal::after {border-color: rgb(255, 128, 88);}
+.zone5 .portal::after {border-color: rgb(197, 82, 81);}
+.zone6 .portal::after {border-color: rgb(153, 203, 254);}
+.zone7 .portal::after {border-color: rgb(133, 133, 247);}
+.zone8 .portal::after {border-color: rgb(151, 151, 151);}
+.zone9 .portal::after {border-color: rgb(103, 103, 103);}
+.zone10 .portal::after {border-color: rgb(212, 212, 212);}
+
+
+	/* STRUCTURAL LINE SIZE AND POSITION */
+		/* Crateria */
+
+.zone0 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+    width: 0.5em;
+}
+.zone0 .portal1::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+	width: 5.2em;
+}
+.zone0 .portal2::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+	top: -1.95em;
+	height: 1.95em;
+}
+.zone0 .portal3::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.6em;
+	top: -0.65em;
+	height: 0.65em
+}
+.zone0 .portal4::before {}
+
+		/* Green Brin */
+
+.zone1 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 0.55em;
+	top: 2.5em;
+	width: 1.2em
+}
+
+.zone1 .portal0::after {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.55em;
+	top: 1.3em;
+	height: 1.2em;
+}
+
+
+.zone1 .portal1::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 0.55em;
+	top: 2.5em;
+	width: 1.3em
+}
+
+.zone1 .portal1::after {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.55em;
+	top: 1.3em;
+	height: 1.2em;
+}
+
+
+.zone1 .portal2::before {}
+
+		/* Red Brin */
+
+.zone2 .portal0::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+    top: -1.4em;
+    height: 1.4em;
+}
+
+.zone2 .portal0::after {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+	top: 1.3em;
+	height: 1.1em;
+}
+
+.zone2 .portal1::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: -0.9em;
+    top: 0.65em;
+    width: 0.9em;
+}
+.zone2 .portal2::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+	top: 1.3em;
+	height: 0.6em;
+}
+.zone2 .portal3::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+	width: 1.4em
+}
+
+.zone2 .portal3::after {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: -1.1em;
+    top: 0.65em;
+    width: 1.1em;
+}
+
+.zone2 .portal4::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+	top: 1.3em;
+	height: 1.3em;
+}
+.zone2 .portal5::before {
+	
+}
+
+		/* Wrecked Ship */
+
+.zone3 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+	width: 1.9em;
+}
+.zone3 .portal1::before {}
+
+		/* Upper Norfair */
+
+.zone4 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+	width: 1.25em
+}
+.zone4 .portal1::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: -0.65em;
+	top: 0.65em;
+	height: 3.2em;
+}
+.zone4 .portal2::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 0.65em;
+	top: -1.9em;
+	width: 5.1em;
+}
+.zone4 .portal3::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+	top: 1.3em;
+	height: 1.3em;
+}
+.zone4 .portal4::before {}
+
+		/* Lower Norfair */
+
+.zone5 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+	width: 1.9em;
+}
+.zone5 .portal1::before {}
+
+.zone6 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 0.65em;
+	top: 1.95em;
+	width: 3.8em;
+}
+
+		/* West Maridia */
+
+.zone6 .portal1::before {
+	border-left-width: 1px; 
+	border-left-style: solid;
+    left: 0.65em;
+	top: -2.6em;
+	height: 2.6em;
+}
+.zone6 .portal2::before {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    left: -3.3em;
+    top: 3.2em;
+    width: 3.3em;
+}
+.zone6 .portal3::before {}
+
+		/* East Maridia */
+
+.zone7 .portal0::before {
+	border-bottom-width: 1px; 
+	border-bottom-style: solid;
+    left: 1.3em;
+	top: 0.65em;
+	width: 1.9em;
+}
+.zone7 .portal1::before {}
+
+
+
+/*  - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
+
+
+/* Clearing Floats */
+
+.group:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+* html .group             { zoom: 1; } /* IE6 */
+*:first-child+html .group { zoom: 1; } /* IE7 */

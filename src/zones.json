@@ -1,0 +1,211 @@
+{
+	"zones" : [
+		{
+			"id" : 0,
+			"name" : "Crateria",
+			"color" : "#f8d132",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Green Brinstar Elevator"
+				},
+				{
+					"id" : 1,
+					"name" : "Tourian"
+				},
+				{
+					"id" : 2,
+					"name" : "Meme Route"
+				},
+				{
+					"id" : 3,
+					"name" : "Crab Tunnel"
+				},
+				{
+					"id" : 4,
+					"name" : "Wrecked Ship"
+				}
+			]
+		},
+		{
+			"id" : 1,
+			"name" : "Green Brinstar",
+			"color" : "#94f073",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Crateria Elevator"
+				},
+				{
+					"id" : 1,
+					"name" : "Meme Route"
+				},
+				{
+					"id" : 2,
+					"name" : "Red Brinstar Entrance"
+				}
+			]
+		},
+		{
+			"id" : 2,
+			"name" : "Red Brinstar",
+			"color" : "#d054a8",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Green Brinstar Exit"
+				},
+				{
+					"id" : 1,
+					"name" : "West Maridia Exit"
+				},
+				{
+					"id" : 2,
+					"name" : "Crateria Elevator"
+				},
+				{
+					"id" : 3,
+					"name" : "The Tank"
+				},
+				{
+					"id" : 4,
+					"name" : "Maridia Exit Lower"
+				},
+				{
+					"id" : 5,
+					"name" : "Upper Norfair Entrance"
+				}
+			]
+		},
+		{
+			"id" : 3,
+			"name" : "Wrecked Ship",
+			"color" : "#24825d",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Crateria Entrance"
+				},
+				{
+					"id" : 1,
+					"name" : "Forgotten Highway"
+				}
+			]
+		},
+		{
+			"id" : 4,
+			"name" : "Upper Norfair",
+			"color" : "#ff8058",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Red Brinstar Entrance"
+				},
+				{
+					"id" : 1,
+					"name" : "Kraid Entrance"
+				},
+				{
+					"id" : 2,
+					"name" : "Crocomire Entrance"
+				},
+				{
+					"id" : 3,
+					"name" : "Single Chamber"
+				},
+				{
+					"id" : 4,
+					"name" : "Kronic Boost Room"
+				}
+			]
+		},
+		{
+			"id" : 5,
+			"name" : "Lower Norfair",
+			"color" : "#c55251",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Elevator Entrance"
+				},
+				{
+					"id" : 1,
+					"name" : "Exit to Single Chamber"
+				}
+			]
+		},
+		{
+			"id" : 6,
+			"name" : "West Maridia",
+			"color" : "#99cbfe",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Exit to Red Brinstar"
+				},
+				{
+					"id" : 1,
+					"name" : "Main Street"
+				},
+				{
+					"id" : 2,
+					"name" : "Entrance to East Maridia"
+				},
+				{
+					"id" : 3,
+					"name" : "Crab Hole"
+				}
+			]
+		},
+		{
+			"id" : 7,
+			"name" : "East Maridia",
+			"color" : "#8585f7",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Entrance"
+				},
+				{
+					"id" : 1,
+					"name" : "Exit to Forgotten Highway"
+				}
+			]
+		},
+		{
+			"id" : 8,
+			"name" : "Kraid",
+			"color" : "#979797",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Kraid"
+				}
+			]
+		},
+		{
+			"id" : 9,
+			"name" : "Crocomire",
+			"color" : "#676767",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Crocomire"
+				}
+			]
+		},
+		{
+			"id" : 10,
+			"name" : "Tourian",
+			"color" : "#d4d4d4",
+			"portals" : [
+				{
+					"id" : 0,
+					"name" : "Tourian"
+				}
+			]
+		}
+		
+		
+	]
+}
