@@ -15,20 +15,26 @@ function App() {
 class Map extends React.Component {
 	constructor(props) {
 		super(props);
+		// view: mapview, zoneview
+		// 
 		this.state = {
 			view : "mapview",
 			isPortalActive : false,
 			active_portal : [null, null],
-			connections : "[]"
+			connections : "[]",
+			labels : true,
+			isZoneActive : false,
+			side_zones : [],
+			main_zone : null
 		};
 		this.zones = data.zones;
-		this.statechange = this.statechange.bind(this);	
+		this.mapstatechange = this.mapstatechange.bind(this);	
 		if(localStorage.getItem('connections') != '[]'){
 			localStorage.setItem('connections', '[]');
 		}
 	}
 	
-	statechange(obj){
+	mapstatechange(obj){
 		this.setState(obj);
 	}
 	
@@ -37,11 +43,11 @@ class Map extends React.Component {
 		var newstyle = this.props.color;
 // 		console.log(newstyle);
 		return (
-    <div className={"map "+this.state.view} onClick={(e)=> mapView(e.target)} onContextMenu={(e)=> zoneRightClick(e.target)}>
+    <div className={"map "+this.state.view} onClick={(e)=> mapView(this, "map")} onContextMenu={(e)=> mapRightClick(this, "map")}>
  		{this.zones.map((datum, key) => {
-			return <Zone key={key} id={datum.id} name={datum.name} color={datum.color} portals={datum.portals} state={this.state} statechange={this.statechange} />
+			return <Zone key={key} id={datum.id} name={datum.name} color={datum.color} portals={datum.portals} state={this.state} mapstatechange={this.mapstatechange} />
 		})}
-		<button id="toggleText" className="toggletext" onClick={(e) => toggleLabels(e)} >Toggle Area Labels</button>
+		<button id="toggleText" className="toggletext" onClick={(e) => toggleLabels(e, this)} >Toggle Area Labels</button>
     </div>
 		);
 	}
@@ -52,15 +58,40 @@ class Zone extends React.Component {
 	constructor(props) {
 		super(props);
 	}
-	
+
 	render(){
-		var newstyle = this.props.color;
-//		console.log(newstyle);
+//		var newstyle = this.props.color;
+		var labelClass = "";
+		var zoneState = "";
+		
+		if(this.props.id === this.props.state.main_zone){
+			zoneState = " main";
+		} 
+//			console.log(this.props.state.side_zones);
+		try{
+		for(var i=0; i<this.props.state.side_zones.length; i++){
+//			console.log(this.props.state.side_zones[i]);
+//			console.log(this.props.id);
+			if(this.props.id === this.props.state.side_zones[i]){
+//				console.log("WOOP!");
+				zoneState = " side";
+			}
+//			console.log(zoneState);
+		}
+		} catch(err) {
+			console.log("No connections yet");
+		}
+		
+		
+		if(!this.props.state.labels){
+			labelClass = " hidelabels"
+		}
+//		console.log(zoneState);
 		return (
-			<div className={"zone zone"+this.props.id} data-id={this.props.id} data-name={this.props.name} data-color={this.props.color} onClick={(e)=> zoneClick(e, this.props.id)} onContextMenu={(e)=> zoneRightClick(e.target)}>
-				<h2>{this.props.name}</h2>
+			<div className={"zone zone"+this.props.id+zoneState} data-id={this.props.id} data-name={this.props.name} data-color={this.props.color} onClick={(e)=> zoneClick(e, this.props.id, this)} onContextMenu={(e)=> zoneRightClick(e.target, this)}>
+				<h2 className={"label"+labelClass}>{this.props.name}</h2>
 				{this.props.portals.map((datum, key) => {
-					return <Portal key={key} id={datum.id} color={this.props.color} zoneid={this.props.id} state={this.props.state} statechange={this.props.statechange} />
+					return <Portal key={key} id={datum.id} color={this.props.color} zoneid={this.props.id} state={this.props.state} mapstatechange={this.props.mapstatechange} />
 				})}
 	      	</div>
 		);
@@ -72,8 +103,9 @@ class Portal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			connected : ""
+			connected : "unassigned"
 		};
+		this.portalstatechange = this.portalstatechange.bind(this);	
 	}
 	
 	portalstatechange(obj){
@@ -81,120 +113,152 @@ class Portal extends React.Component {
 	}
 	
 	render(){
-		var clicked_class = "";
-		if(this.props.state.active_portal[0] == this.props.zoneid && this.props.state.active_portal[1] == this.props.id){
-			// this is the active portal
-			clicked_class=" clicked";
-		}
 		return (
-			<div className={"portal portal"+this.props.id+" "+ this.state.connected +" "+clicked_class} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")}></div>
+			<div className={"portal portal"+this.props.id+" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")}></div>
 	  	);
   	}
 }
 
 // MAP LOGIC
 
-function mapRightClick(target){
-//	console.log(target);
-	console.log("map");
+
+function mapView(comp, fromWhich){
+//	console.log(comp);
+	if(fromWhich == "map"){
+		try {
+			comp.mapstatechange({
+				view : "mapview",
+				main_zone : null,
+				side_zones : []
+			});
+		} catch(err) {
+			console.log("mapview: map error");
+		}
+	}
+	
+	if(fromWhich == "zone"){
+		try {
+			comp.props.mapstatechange({
+				view : "mapview",
+				main_zone : null,
+				side_zones : []
+			});
+		} catch(err) {
+			console.log("mapview: zone error");
+		}
+	}
+
 }
 
-function mapView(target){
-	for(var i=0; i<target.classList.length; i++){
-		if(target.classList[i] == "zoneview"){
-			// remove class
-			target.classList.remove("zoneview");
-			// add mapview
-			target.classList.add("mapview");
-			removeZoneClasses();
-		}
+function mapRightClick(comp){
+	if(comp.state.view == "zoneview"){
+		mapView(comp, "map");	
 	}
 }
 
 
 // ZONE LOGIC
 
-function zoneClick(e, id){
+function zoneClick(e, id, comp){
 	e.stopPropagation();
 	var all_zones = document.getElementsByClassName("zone");
 	var connections = localStorage.getItem("connections");
 	var cnxzones = [];
 	var filtered_cnxzones;
-	var sidecounter = 1;
+//	var sidecounter = 1;
+//	var newarr = comp.props.state.side_zones;
+//	console.log(connections);
 	let cnx;
 	try {
 		cnx = JSON.parse(connections);
+		if(cnx.length>0){
+			for(var i=0; i<cnx.length; i++){
+				if(cnx[i][0][0] === comp.props.id || cnx[i][1][0] === comp.props.id){
+					for(var j=0; j<cnx[i].length; j++){
+						cnxzones.push(cnx[i][j][0]);
+						filtered_cnxzones = removeDuplicates(cnxzones);
+					}				
+				}
+			}
+			
+//			console.log(filtered_cnxzones);
+			
+			if(filtered_cnxzones.length>0){
+				var index = filtered_cnxzones.indexOf(comp.props.id);
+				filtered_cnxzones.splice(index, 1);
+			}
+//			console.log(filtered_cnxzones);
+
+		}
 	} catch (err) {
 		console.log("local storage connections data not valid JSON");
 	}
-	for(var i=0; i<cnx.length; i++){
-		for(var j=0; j<cnx[i].length; j++){
-			cnxzones.push(cnx[i][j][0]);
-			filtered_cnxzones = removeDuplicates(cnxzones);
-		}
-	}
 //	console.log(filtered_cnxzones);
-	sidecounter = 1;
+	zoneView(comp, filtered_cnxzones);
+
+//	sidecounter = 1;
 //	console.log("in func");
-	try{
-		for(var k=0; k<filtered_cnxzones.length; k++){
+//	try{
+//		for(var k=0; k<filtered_cnxzones.length; k++){
 			// add sidezone class
 //				console.log("in k loop");
 	
-			if(filtered_cnxzones[k] != id){
-//					console.log("in if");
-	
+//			if(filtered_cnxzones[k] != id){
+//				console.log(comp);
+//				console.log(id);
+				
+//				newarr.push(filtered_cnxzones[k]);				
+				
+/*
 				var sideclass = 'sidezone'+(sidecounter);
 				sidecounter++;
 //				console.log(sideclass);
 //				console.log(all_zones[filtered_cnxzones[k]].classList);
 				all_zones[filtered_cnxzones[k]].classList.add(sideclass);
 //				console.log(all_zones[filtered_cnxzones[k]].classList);
-			}
-		}
-	} catch (err) {
-		console.log("nothing in connex array yet");
-	}
-	zoneView(e, id);
+*/
+//			}
+//		}
+//		console.log(newarr);
+//	} catch (err) {
+//		console.log("nothing in connex array yet");
+//	}
+//	console.log(newarr);
 }
 
-function zoneRightClick(target){
-//	console.log(target);
-//	console.log("zone");
+function zoneRightClick(comp){
+	mapView(comp, "zone");
+}
+
+
+function zoneView(comp, side_ids){
+
+	console.log(comp);
+	console.log(side_ids);
+
+// if it's a MAP click
+/*
+	try {
+		comp.mapstatechange({
+			view : "zoneview"
+		});
+	} catch(err) {
+		console.log("zoneview: not a map");
+	}
+*/
 	
-	for(var i=0; i<target.classList.length; i++){
-		if(target.classList[i] == "mainzone"){
-//			console.log("main found");
-			mapView(target.parentNode);
-		}
+// if it's a ZONE click
+//console.log(side_ids);
+	try {
+		comp.props.mapstatechange({
+			view : "zoneview",
+			main_zone : comp.props.id,
+			side_zones : side_ids
+		});
+	} catch(err) {
+		console.log("zoneview: not a zone");
 	}
-}
 
-function zoneView(e){
-	for(var i=0; i<e.target.parentNode.classList.length; i++){
-		if(e.target.parentNode.classList[i] == "mapview"){
-			// remove class
-			e.target.parentNode.classList.remove("mapview");
-			// add mapview
-			e.target.parentNode.classList.add("zoneview");
-			removeZoneClasses();
-			e.target.classList.add("mainzone");
-		}
-	}
-}
-
-function removeZoneClasses(){
-	var zones = document.getElementsByClassName("zone");
-	for(var i=0; i<zones.length; i++){
-		zones[i].classList.remove("sidezone1");
-		zones[i].classList.remove("sidezone2");
-		zones[i].classList.remove("sidezone3");
-		zones[i].classList.remove("sidezone4");
-		zones[i].classList.remove("sidezone5");
-		zones[i].classList.remove("sidezone6");
-		zones[i].classList.remove("mainzone");
-
-	}
 }
 
 // PORTAL LOGIC
@@ -215,14 +279,14 @@ function clickPortal(comp, e, type){
 				// There is already a clicked portal
 				if(comp.props.state.active_portal[0] == comp.props.zoneid && comp.props.state.active_portal[1] == comp.props.id){
 //					console.log("same portal");
-					comp.props.statechange({
+					comp.props.mapstatechange({
 						isPortalActive : false,
 						active_portal : [null, null]
 					});	
 				} else {
 					makePartnership(comp, [comp.props.state.active_portal[0], comp.props.state.active_portal[1]], [comp.props.zoneid, comp.props.id]);
 //					console.log("make partnership");
-					comp.props.statechange({
+					comp.props.mapstatechange({
 						isPortalActive : false,
 						active_portal : [null, null]
 					});
@@ -234,7 +298,7 @@ function clickPortal(comp, e, type){
 			} else {
 	//			console.log(comp);
 				// There are no clicked portals
-				comp.props.statechange({
+				comp.props.mapstatechange({
 					isPortalActive : true,
 					active_portal : [comp.props.zoneid, comp.props.id]
 				});
@@ -249,12 +313,12 @@ function clickPortal(comp, e, type){
 	} else if (type == "right") {
 		// right click
 		if(comp.props.state.active_portal[0] == comp.props.zoneid && comp.props.state.active_portal[1] == comp.props.id){
-			comp.props.statechange({
+			comp.props.mapstatechange({
 				isPortalActive : false,
 				active_portal : [null, null]
 			});
 			comp.portalstatechange({
-				connected : ""
+				connected : "unassigned"
 			});
 		}
 	}
@@ -282,12 +346,12 @@ function makePartnership(comp, portal1, portal2){
 	}
 	if(connections_exist){
 		existing_connections.push(newportals);
-		comp.props.statechange({
+		comp.props.mapstatechange({
 			connections : JSON.stringify(existing_connections)
 		});
 		localStorage.setItem('connections', JSON.stringify(existing_connections));
 	} else {
-		comp.props.statechange({
+		comp.props.mapstatechange({
 			connections : JSON.stringify(newportals)
 		});
 		localStorage.setItem('connections', JSON.stringify(newportals));
@@ -367,8 +431,8 @@ function drawLines(){
 //					gradient.addColorStop("0.5", "#111111");
 					gradient.addColorStop("1.0", color2);
 					//console.log(gradient);
-					console.log(this_w);
-					console.log(this_h);
+//					console.log(this_w);
+//					console.log(this_h);
 					ctx.strokeStyle = gradient;
 					ctx.lineWidth = 3;
 					ctx.beginPath();
@@ -411,19 +475,24 @@ function clearLines(){
 
 // APP FEATURES
 
-function toggleLabels(e){
-//	console.log(e);
-	var offIndex = -1;
-	for(var i=0; i<e.target.parentNode.classList.length; i++){
-		if(e.target.parentNode.classList[i] == "hidelabels"){
-			offIndex = i;
-//			console.log(offIndex);
+function toggleLabels(e, comp){
+	if(comp.state.labels){
+		try {
+			comp.mapstatechange({
+				labels : false
+			});
+		} catch(err) {
+			console.log("togglebuttons: not a map");
 		}
-	}
-	if(offIndex > -1){
-		e.target.parentNode.classList.remove("hidelabels");
+		
 	} else {
-		e.target.parentNode.classList.add("hidelabels");
+		try {
+			comp.mapstatechange({
+				labels : true
+			});
+		} catch(err) {
+			console.log("togglebuttons: not a map");
+		}
 	}
 }
 

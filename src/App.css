@@ -107,7 +107,7 @@ canvas {
     z-index: 3;
 }
 
-.map.hidelabels .zone h2 {
+h2.hidelabels {
 	display: none;
 }
 
@@ -390,45 +390,45 @@ canvas {
 
 	/* ZONE POSITION in ZONEVIEW for ELEMENTS ON SCREEN */
 
-.zoneview .mainzone {
+.zoneview .main {
 	display: block;
     left: 45.5%;
     top: 30%;
     scale: 1.0;
 }
 
-.zoneview .sidezone1 {
+.zoneview .zone:nth-child(1 of .side) {
 	display: block;
 	top: 10%;
 	left: 10%;
 	scale: 1.0;
 }
-.zoneview .sidezone2 {
+.zoneview .zone:nth-child(2 of .side) {
 	display: block;
 	top: 32.67%;
 	left: 10%;
 	scale: 1.0;
 }
-.zoneview .sidezone3 {
+.zoneview .zone:nth-child(3 of .side) {
 	display: block;
 	top: 72.2%;
 	left: 10%;
 	scale: 1.0;
 }
-.zoneview .sidezone4 {
+.zoneview .zone:nth-child(4 of .side) {
 	display: block;
 	top: 10%;
 	left: 80%;
 	scale: 1.0;
 
 }
-.zoneview .sidezone5 {
+.zoneview .zone:nth-child(5 of .side) {
 	display: block;
 	top: 46.67%;
 	left: 80%;
 	scale: 1.0;
 }
-.zoneview .sidezone6 {
+.zoneview .zone:nth-child(6 of .side) {
 	display: block;
 	top: 72.2%;
 	left: 80%;
