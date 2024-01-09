@@ -67,12 +67,15 @@ html {
 	font-size: 100%;
 }
 
-.toggletext {
-	background-color: #333;
-	padding: 10px;
-	border: 4px solid #eee;
-	font-weight: bold;
-	color: #fff;
+.toggletext, .toggleitems, .togglebosses {
+    background-color: #000;
+    padding: 10px;
+    border: 2px solid rgba(80,80,100,0.85);
+    font-weight: bold;
+    color: #fff;
+    width: 100%;
+    border-radius: 30px;
+    margin-bottom: 4px;
 }
 
 
@@ -80,11 +83,28 @@ canvas {
 	position: absolute;
     top: 0;
     left: 0;
-    margin: 20px;
     width: 85%;
-    height: 100%;
+    height: 700px;
     z-index: 30;
     pointer-events: none;
+}
+
+.items {
+	width: 20px;
+	height: 20px;
+	border: 1px solid #fff;
+	position: absolute;
+	cursor: pointer;
+	opacity: 0.6;
+}
+
+.bosses {
+	width: 40px;
+	height: 40px;
+	border: 3px dotted #fff;
+	border-radius: 40px;
+	position: absolute;
+	cursor: pointer;
 }
 
 /* MAP LEVEL */
@@ -97,19 +117,30 @@ canvas {
 */
 	width: 85%;
 	height: 100%;
-    min-height: 500px;
+    min-height: 700px;
     max-width: 2048px;
     min-width: 800px;
- /*   border: 5px solid #aaa; */
-    margin: 20px;
     background-color: #000;
     overflow: hidden;
     z-index: 3;
+    float:left;
 }
 
 h2.hidelabels {
 	display: none;
 }
+
+.control_panel {
+	width: 15%;
+    float: left;
+    height: 700px;
+    background-color: #333;
+}
+
+.toggletext.hidden, .toggleitems.hidden, .togglebosses.hidden {
+	opacity: 0.3;
+}
+
 
 /* ZONE LEVEL */
 
@@ -123,16 +154,6 @@ h2.hidelabels {
 	z-index: 5;
 }
 
-/*
-.mapview .zone {
-	transform: translateY(0px);
-}
-
-.zoneview .zone {
-	transform: translateY(-100px);
-}
-*/
-
 .zone0 {
 	width: 9.7em;
     height: 4.3em;
@@ -142,8 +163,8 @@ h2.hidelabels {
     height: 5.2em;
 }
 .zone2 {
-    height: 11em;
-    width: 8.2em;
+    height: 10em;
+    width: 7em;
 }
 .zone3 {
 	width: 4.5em;
@@ -216,9 +237,10 @@ h2.hidelabels {
 
 
 .zone4 h2 {
-    top: 4.4em;
-    left: 2.6em;
+    top: 4.6em;
+    left: 3em;
 	color: rgb(255, 128, 88);
+	min-width: 7em;
 }
 
 .zone5 h2 {
@@ -323,6 +345,11 @@ h2.hidelabels {
 
 	/* ZONE POSITION in ZONEVIEW for ELEMENTS OFFSCREEN */
 
+.zoneview .side {
+	min-height: 160px;
+	min-width: 110px;
+}
+
 
 .zoneview .zone0 {
     top: -10em;
@@ -365,7 +392,7 @@ h2.hidelabels {
 }
 
 .zoneview .zone8 {
-    left: -10em;
+    left: -15em;
     top: 21.6em;
 }
 
@@ -380,14 +407,6 @@ h2.hidelabels {
 }
 
 
-
-/*
-.zoneview .zone {
-	display: none;
-}
-*/
-
-
 	/* ZONE POSITION in ZONEVIEW for ELEMENTS ON SCREEN */
 
 .zoneview .main {
@@ -395,6 +414,14 @@ h2.hidelabels {
     left: 45.5%;
     top: 30%;
     scale: 1.0;
+}
+
+.zone10 .items {
+	display: none;
+}
+
+.side {
+	pointer-events: none;
 }
 
 .zoneview .zone:nth-child(1 of .side) {
@@ -405,13 +432,13 @@ h2.hidelabels {
 }
 .zoneview .zone:nth-child(2 of .side) {
 	display: block;
-	top: 32.67%;
+	top: 42.67%;
 	left: 10%;
 	scale: 1.0;
 }
 .zoneview .zone:nth-child(3 of .side) {
 	display: block;
-	top: 72.2%;
+	top: 76.2%;
 	left: 10%;
 	scale: 1.0;
 }
@@ -430,12 +457,104 @@ h2.hidelabels {
 }
 .zoneview .zone:nth-child(6 of .side) {
 	display: block;
-	top: 72.2%;
+	top: 76.2%;
 	left: 80%;
 	scale: 1.0;
 }
 
+/* ITEMS and BOSSES */
 
+.items, .bosses {
+	z-index: -1;
+}
+
+.zone0 .items {
+	left:7.4em;
+	top: -1.8em;
+}
+.zone1 .items {
+	left: 0.3em;
+	top: 3.5em;
+}
+.zone2 .items {
+	left: -2em;
+	top: 1em;
+}
+.zone3 .items {
+	left: 5.8em;
+	top: -2em;
+}
+.zone4 .items {
+	left: 10.1em;
+	top: 4.5em;
+}
+.zone5 .items {
+	left: 5em;
+	top: 4.2em;
+}
+.zone6 .items {
+	left: 6em;
+	top: -2.4em;
+}
+.zone7 .items {
+	left: 5em;
+	top: 3.7em;
+}
+.zone8 .items {
+	left: 6em;
+	top: 0.8em;
+}
+.zone9 .items {
+	left: 4.3em;
+	top: 2.5em;
+}
+.zone10 .items {
+	left: -2em;
+	top: 1em;
+}
+
+.zone3 .bosses {
+	left: 7.8em;
+	top: -1em;
+}
+.zone5 .bosses {
+	left: 1em;
+	top: 2em;
+}
+.zone7 .bosses {
+	left: 1em;
+	top: 2em;
+}
+.zone8 .bosses {
+	left: 8em;
+	top: 0.2em;
+}
+
+.bosses.kraid {
+	background-image: url("i/kraid40.jpg");
+}
+.bosses.phantoon {
+	background-image: url("i/phantoon40.jpg");
+}
+.bosses.draygon {
+	background-image: url("i/draygon40.jpg");
+}
+.bosses.ridley {
+	background-image: url("i/ridley40.jpg");
+}
+.bosses.unknown {
+	background-image: url("i/unknown.jpg");
+}
+
+.zoneview .side .items, .zoneview .side .bosses {
+	display: none;
+}
+
+.items .value {
+	display: block;
+	padding: 2px 5px;
+	user-select: none;
+}
 
 /* PORTAL LEVEL */
 
@@ -443,7 +562,7 @@ h2.hidelabels {
     min-height: 1.22em;
     min-width: 1.22em;
     border-radius: 100%;
-    outline: 0.065em solid #000;
+    outline: 0.15em solid #000;
     display: inline-block;
 /*	background: linear-gradient( 90deg, blue 50%, red 51% ); */
 	position: relative;
@@ -463,6 +582,10 @@ h2.hidelabels {
     position: absolute;
     z-index: 1;
     pointer-events: none;
+}
+
+.portal p {
+	display: none;
 }
 
 .portal.connected:hover {
@@ -494,7 +617,34 @@ h2.hidelabels {
 .zone9 .portal {outline-color: rgb(103, 103, 103);}
 .zone10 .portal {outline-color: rgb(212, 212, 212);}
 
+.zone0 .items {border-color: rgb(248, 209, 50);}
+.zone1 .items {border-color: rgb(148, 240, 115);}
+.zone2 .items {border-color: rgb(208, 84, 168);}
+.zone3 .items {border-color: rgb(36, 130, 93);}
+.zone4 .items {border-color: rgb(255, 128, 88);}
+.zone5 .items {border-color: rgb(197, 82, 81);}
+.zone6 .items {border-color: rgb(153, 203, 254);}
+.zone7 .items {border-color: rgb(133, 133, 247);}
+.zone8 .items {border-color: rgb(151, 151, 151);}
+.zone9 .items {border-color: rgb(103, 103, 103);}
+.zone10 .items {border-color: rgb(212, 212, 212);}
 
+.zone3 .bosses {border-color: rgb(36, 130, 93);}
+.zone5 .bosses {border-color: rgb(197, 82, 81);}
+.zone7 .bosses {border-color: rgb(133, 133, 247);}
+.zone8 .bosses {border-color: rgb(151, 151, 151);}
+
+.zone0 .items .value {color: rgb(248, 209, 50);}
+.zone1 .items .value {color: rgb(148, 240, 115);}
+.zone2 .items .value {color: rgb(208, 84, 168);}
+.zone3 .items .value {color: rgb(36, 130, 93);}
+.zone4 .items .value {color: rgb(255, 128, 88);}
+.zone5 .items .value {color: rgb(197, 82, 81);}
+.zone6 .items .value {color: rgb(153, 203, 254);}
+.zone7 .items .value {color: rgb(133, 133, 247);}
+.zone8 .items .value {color: rgb(151, 151, 151);}
+.zone9 .items .value {color: rgb(103, 103, 103);}
+.zone10 .items .value {color: rgb(212, 212, 212);}
 
 .zone0 .portal.connected {background-color: rgb(248, 209, 50);}
 .zone1 .portal.connected {background-color: rgb(148, 240, 115);}
@@ -568,8 +718,8 @@ h2.hidelabels {
     left: -1.05em;
 }
 .zone2 .portal5 {
-    left: -2.3em;
-    top: 7.9em;
+    left: 3.85em;
+    top: 6.6em;
 }
 
 		/* Wrecked Ship */
@@ -887,6 +1037,17 @@ h2.hidelabels {
 }
 .zone7 .portal1::before {}
 
+
+.semi-circle {
+  width: 1em;
+  height: 2em;
+  background-color: #48abe0;
+  border-radius: 1em 0 0 1em;
+}
+
+.off {
+	display: none;
+}
 
 
 /*  - - - - - - - - - - - - - - - - - - - - - - - - - - -  */

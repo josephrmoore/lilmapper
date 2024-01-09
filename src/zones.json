@@ -7,23 +7,28 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Green Brinstar Elevator"
+					"name" : "Green Brinstar Elevator",
+					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "Tourian"
+					"name" : "Tourian",
+					"dir" : 2
 				},
 				{
 					"id" : 2,
-					"name" : "Meme Route"
+					"name" : "Meme Route",
+					"dir" : 3
 				},
 				{
 					"id" : 3,
-					"name" : "Crab Tunnel"
+					"name" : "Crab Tunnel",
+					"dir" : 4
 				},
 				{
 					"id" : 4,
-					"name" : "Wrecked Ship"
+					"name" : "Wrecked Ship",
+					"dir" : 5
 				}
 			]
 		},
@@ -34,15 +39,18 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Crateria Elevator"
+					"name" : "Crateria Elevator",
+					"dir" : 4
 				},
 				{
 					"id" : 1,
-					"name" : "Meme Route"
+					"name" : "Meme Route",
+					"dir" : 5
 				},
 				{
 					"id" : 2,
-					"name" : "Red Brinstar Entrance"
+					"name" : "Red Brinstar Entrance",
+					"dir" : 6
 				}
 			]
 		},
@@ -53,27 +61,33 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Green Brinstar Exit"
+					"name" : "Green Brinstar Exit",
+					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "West Maridia Exit"
+					"name" : "West Maridia Exit",
+					"dir" : 5
 				},
 				{
 					"id" : 2,
-					"name" : "Crateria Elevator"
+					"name" : "Crateria Elevator",
+					"dir" : 4
 				},
 				{
 					"id" : 3,
-					"name" : "The Tank"
+					"name" : "The Tank",
+					"dir" : 2
 				},
 				{
 					"id" : 4,
-					"name" : "Maridia Exit Lower"
+					"name" : "Maridia Exit Lower",
+					"dir" : 6
 				},
 				{
 					"id" : 5,
-					"name" : "Upper Norfair Entrance"
+					"name" : "Upper Norfair Entrance",
+					"dir" : 3
 				}
 			]
 		},
@@ -84,11 +98,13 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Crateria Entrance"
+					"name" : "Crateria Entrance",
+					"dir" : 2
 				},
 				{
 					"id" : 1,
-					"name" : "Forgotten Highway"
+					"name" : "Forgotten Highway",
+					"dir" : 5
 				}
 			]
 		},
@@ -99,23 +115,28 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Red Brinstar Entrance"
+					"name" : "Red Brinstar Entrance",
+					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "Kraid Entrance"
+					"name" : "Kraid Entrance",
+					"dir" : 2
 				},
 				{
 					"id" : 2,
-					"name" : "Crocomire Entrance"
+					"name" : "Crocomire Entrance",
+					"dir" : 3
 				},
 				{
 					"id" : 3,
-					"name" : "Single Chamber"
+					"name" : "Single Chamber",
+					"dir" : 4
 				},
 				{
 					"id" : 4,
-					"name" : "Kronic Boost Room"
+					"name" : "Kronic Boost Room",
+					"dir" : 5
 				}
 			]
 		},
@@ -126,11 +147,13 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Elevator Entrance"
+					"name" : "Elevator Entrance",
+					"dir" : 2
 				},
 				{
 					"id" : 1,
-					"name" : "Exit to Single Chamber"
+					"name" : "Exit to Single Chamber",
+					"dir" : 5
 				}
 			]
 		},
@@ -141,19 +164,23 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Exit to Red Brinstar"
+					"name" : "Exit to Red Brinstar",
+					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "Main Street"
+					"name" : "Main Street",
+					"dir" : 3
 				},
 				{
 					"id" : 2,
-					"name" : "Entrance to East Maridia"
+					"name" : "Entrance to East Maridia",
+					"dir" : 4
 				},
 				{
 					"id" : 3,
-					"name" : "Crab Hole"
+					"name" : "Crab Hole",
+					"dir" : 6
 				}
 			]
 		},
@@ -164,11 +191,13 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Entrance"
+					"name" : "Entrance",
+					"dir" : 2
 				},
 				{
 					"id" : 1,
-					"name" : "Exit to Forgotten Highway"
+					"name" : "Exit to Forgotten Highway",
+					"dir" : 5
 				}
 			]
 		},
@@ -179,7 +208,8 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Kraid"
+					"name" : "Kraid",
+					"dir" : 1
 				}
 			]
 		},
@@ -190,7 +220,8 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Crocomire"
+					"name" : "Crocomire",
+					"dir" : 1
 				}
 			]
 		},
@@ -201,7 +232,8 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Tourian"
+					"name" : "Tourian",
+					"dir" : 1
 				}
 			]
 		}
