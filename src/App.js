@@ -2,9 +2,9 @@ import './App.css';
 import React from 'react';
 import data from "./zones";
 
-	var useItems = true;
-	var useBosses = true;
-	var useLabels = true;
+var useItems = true;
+var useBosses = true;
+var useLabels = true;
 
 function App() {
 	
@@ -30,12 +30,14 @@ class Map extends React.Component {
 		this.state = {
 			view : "mapview",
 			isPortalActive : false,
-			active_portal : [null, null],
+			active_portal : null,
 			connections : "[]",
 			labels : true,
 			isZoneActive : false,
 			side_zones : [],
-			main_zone : null
+			main_zone : null,
+			main_comp : null,
+			side_comps : []
 		};
 		this.zones = data.zones;
 		this.mapstatechange = this.mapstatechange.bind(this);	
@@ -64,33 +66,37 @@ class Map extends React.Component {
 class Zone extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			//view: default, main, side, offscreen
+			view : "default"
+		}
+	}
+	
+	zonestatechange(obj){
+		this.setState(obj);
 	}
 
 	render(){
-		var labelClass = "";
-		var zoneState = "";
-		
-		if(this.props.id === this.props.state.main_zone){
-			zoneState = " main";
-		} 
+	
 		try{
-			for(var i=0; i<this.props.state.side_zones.length; i++){
-				if(this.props.id === this.props.state.side_zones[i]){
-					zoneState = " side";
+			this.state.view = "default";
+			if(this.props.state.main_zone === this.props.id){
+				this.state.view = "main"
+			}
+			if(this.props.state.side_zones.length>0){
+				for(var i=0; i<this.props.state.side_zones.length; i++){
+					if(this.props.state.side_zones[i] == this.props.id){
+						this.state.view = "side";
+					}
 				}
 			}
-		} catch(err) {
-			console.log("No connections yet");
-		}
-		
-		
-		if(!this.props.state.labels){
-			labelClass = " hidelabels"
+		} catch (err) {
+			console.log("no side zones");
 		}
 		
 		return (
-			<div className={"zone zone"+this.props.id+zoneState} data-id={this.props.id} data-name={this.props.name} data-color={this.props.color} onClick={(e)=> zoneClick(e, this.props.id, this)} onContextMenu={(e)=> zoneRightClick(e.target, this)}>
-				<h2 className={"label"+labelClass}>{this.props.name}</h2>
+			<div className={"zone zone"+this.props.id+" "+this.state.view} data-id={this.props.id} data-name={this.props.name} data-color={this.props.color} onClick={(e)=> zoneClick(e, this.props.id, this)} onContextMenu={(e)=> zoneRightClick(e.target, this)}>
+				<h2 className={"label"}>{this.props.name}</h2>
 				{this.props.portals.map((datum, key) => {
 					return <Portal key={key} id={datum.id} color={this.props.color} zoneid={this.props.id} state={this.props.state} mapstatechange={this.props.mapstatechange} direction={datum.dir} name={datum.name} />
 				})}
@@ -118,8 +124,11 @@ class Portal extends React.Component {
 	}
 	
 	render(){
+		var zoneclass = "nozone";
+		zoneclass = partnerColors(this);
+		
 		return (
-			<div className={"portal portal"+this.props.id+" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")} data-partnercolor={this.state.partner_color}><p className="portal_name">{this.props.name}</p></div>
+			<div className={"portal portal"+this.props.id+" part_"+ zoneclass +" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")} data-partnercolor={this.state.partner_color}><p className="portal_name">{this.props.name}</p><div className={"partner"}></div></div>
 	  	);
   	}
 }
@@ -225,7 +234,9 @@ function mapView(comp, fromWhich){
 			comp.mapstatechange({
 				view : "mapview",
 				main_zone : null,
-				side_zones : []
+				side_zones : [],
+				main_comp : null,
+				side_comps : []
 			});
 		} catch(err) {
 			console.log("mapview: map error");
@@ -237,7 +248,9 @@ function mapView(comp, fromWhich){
 			comp.props.mapstatechange({
 				view : "mapview",
 				main_zone : null,
-				side_zones : []
+				side_zones : [],
+				main_comp : null,
+				side_comps : []
 			});
 		} catch(err) {
 			console.log("mapview: zone error");
@@ -258,6 +271,9 @@ function mapRightClick(comp){
 function zoneClick(e, id, comp){
 	e.stopPropagation();
 	var all_zones = document.getElementsByClassName("zone");
+	var all_portals = comp.props.portals;
+	var zone_portals = [];
+	var connected_portals = [];
 	var connections = localStorage.getItem("connections");
 	var cnxzones = [];
 	var filtered_cnxzones;
@@ -271,6 +287,15 @@ function zoneClick(e, id, comp){
 						for(var j=0; j<cnx[i].length; j++){
 							cnxzones.push(cnx[i][j][0]);
 							filtered_cnxzones = removeDuplicates(cnxzones);
+/*
+							if(cnx[i][j][0] === comp.props.id){
+								for(var k=0; k<all_portals.length; k++){
+									if(cnx[i][j][1] === all_portals[k].id){
+										var dir = all_portals[k].dir;
+									}	
+								}
+							}
+*/
 						}				
 					}
 				}			
@@ -282,7 +307,23 @@ function zoneClick(e, id, comp){
 		} catch (err) {
 			console.log("local storage connections data not valid JSON");
 		}
+//		console.log(comp.props.state.active_portal);
+		try{
+			comp.props.state.active_portal.portalstatechange({
+				connected : "unassigned",
+				partner_color : ""
+			});
+			comp.props.mapstatechange({
+				isPortalActive : false,
+				active_portal : null
+			});
+		} catch(err) {
+			console.log("no active portal right now");
+		}
 		zoneView(comp, filtered_cnxzones);
+		comp.zonestatechange({
+			view : "main"
+		});
 	}
 }
 
@@ -297,7 +338,8 @@ function zoneView(comp, side_ids){
 		comp.props.mapstatechange({
 			view : "zoneview",
 			main_zone : comp.props.id,
-			side_zones : side_ids
+			side_zones : side_ids,
+			main_comp : comp
 		});
 	} catch(err) {
 		console.log("zoneview: not a zone");
@@ -316,29 +358,32 @@ function clickPortal(comp, e, type){
 			//left click
 			if(comp.props.state.isPortalActive){
 				// There is already a clicked portal
-				if(comp.props.state.active_portal[0] == comp.props.zoneid && comp.props.state.active_portal[1] == comp.props.id){
+				if(comp.props.state.active_portal.props.zoneid == comp.props.zoneid && comp.props.state.active_portal.props.id == comp.props.id){
 					comp.props.mapstatechange({
 						isPortalActive : false,
-						active_portal : [null, null]
+						active_portal : null
 					});	
 				} else {
-					makePartnership(comp, [comp.props.state.active_portal[0], comp.props.state.active_portal[1]], [comp.props.zoneid, comp.props.id]);
-					comp.props.mapstatechange({
-						isPortalActive : false,
-						active_portal : [null, null]
-					});
+					makePartnership(comp, comp.props.state.active_portal, comp);
 					comp.portalstatechange({
 						connected : "connected",
-						partner_color : data.zones[comp.props.state.active_portal[0]].color
+						partner_color : comp.props.state.active_portal.props.color
 					});
-//					console.log(data.zones[comp.props.zoneid].color);
+//					console.log(comp.props.state.active_portal);
+					comp.props.state.active_portal.portalstatechange({
+						partner_color : comp.props.color
+					});
+					comp.props.mapstatechange({
+						isPortalActive : false,
+						active_portal : null
+					});
 				}
 
 			} else {
 				// There are no clicked portals
 				comp.props.mapstatechange({
 					isPortalActive : true,
-					active_portal : [comp.props.zoneid, comp.props.id]
+					active_portal : comp
 				});
 				comp.portalstatechange({
 					connected : "connected"
@@ -348,27 +393,72 @@ function clickPortal(comp, e, type){
 		}
 	} else if (type == "right") {
 		// right click
-		if(comp.props.state.active_portal[0] == comp.props.zoneid && comp.props.state.active_portal[1] == comp.props.id){
-			comp.props.mapstatechange({
-				isPortalActive : false,
-				active_portal : [null, null]
-			});
-			comp.portalstatechange({
-				connected : "unassigned",
-				partner_color : ""
-			});
+		try{
+			if(comp.props.state.active_portal.props.zoneid == comp.props.zoneid && comp.props.state.active_portal.props.id == comp.props.id){
+				comp.props.mapstatechange({
+					isPortalActive : false,
+					active_portal : null
+				});
+				comp.portalstatechange({
+					connected : "unassigned",
+					partner_color : ""
+				});
+			}
+		} catch (err){
+			console.log("no active portal");
 		}
 	}
 
 }
 
-// CONNECTIONS LOGIC
+function partnerColors(comp){
+	switch(comp.state.partner_color){
+		case "#f8d132":
+			return "crat";
+			break;
+		case "#94f073":
+			return "gb";
+			break;
+		case "#d054a8":
+			return "rb";
+			break;
+		case "#24825d":
+			return "ws";
+			break;
+		case "#ff8058":
+			return "un";
+			break;
+		case "#c55251":
+			return "ln";
+			break;
+		case "#99cbfe":
+			return "wm";
+			break;
+		case "#8585f7":
+			return "em";
+			break;
+		case "#979797":
+			return "k";
+			break;
+		case "#676767":
+			return "croc";
+			break;
+		case "#d4d4d4":
+			return "t";
+			break;
+		default:
+//			console.log("switch break");
+	}
+//	console.log(comp.state.partner_color);
+//	console.log(zoneclass);
+}
 
+// CONNECTIONS LOGIC
 
 
 function makePartnership(comp, portal1, portal2){
 	var connections_exist = false;
-	var newportals = [portal1, portal2];
+	var newcnxs = [[portal1.props.zoneid, portal1.props.id], [portal2.props.zoneid, portal2.props.id]];
 	let existing_connections;
 	try {
 		existing_connections = JSON.parse(comp.props.state.connections);
@@ -378,16 +468,16 @@ function makePartnership(comp, portal1, portal2){
 //		return console.error(e);
 	}
 	if(connections_exist){
-		existing_connections.push(newportals);
+		existing_connections.push(newcnxs);
 		comp.props.mapstatechange({
 			connections : JSON.stringify(existing_connections)
 		});
 		localStorage.setItem('connections', JSON.stringify(existing_connections));
 	} else {
 		comp.props.mapstatechange({
-			connections : JSON.stringify(newportals)
+			connections : JSON.stringify(newcnxs)
 		});
-		localStorage.setItem('connections', JSON.stringify(newportals));
+		localStorage.setItem('connections', JSON.stringify(newcnxs));
 	}
 	
 	drawLines();
@@ -470,6 +560,16 @@ function clearLines(){
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
+
+function checkSides(){
+	// get main zone
+	// get all connected portals from main zone
+	// for each connected portal:
+		// get dir
+		// get partner zone
+		// add dir class to partner zone
+}
+
 
 // APP FEATURES
 

@@ -7,27 +7,27 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Green Brinstar Elevator",
+					"name" : "ᐊ Green Brin",
 					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "Tourian",
+					"name" : "Tourian ᐅ",
 					"dir" : 2
 				},
 				{
 					"id" : 2,
-					"name" : "Meme Route",
+					"name" : "ᐊ Meme Route",
 					"dir" : 3
 				},
 				{
 					"id" : 3,
-					"name" : "Crab Tunnel",
+					"name" : "Red Brin ᐁ",
 					"dir" : 4
 				},
 				{
 					"id" : 4,
-					"name" : "Wrecked Ship",
+					"name" : "Moat ᐅ",
 					"dir" : 5
 				}
 			]
@@ -39,17 +39,17 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Crateria Elevator",
+					"name" : "Crateria ᐃ",
 					"dir" : 4
 				},
 				{
 					"id" : 1,
-					"name" : "Meme Route",
+					"name" : "Meme Route ᐅ",
 					"dir" : 5
 				},
 				{
 					"id" : 2,
-					"name" : "Red Brinstar Entrance",
+					"name" : "Red Tower ᐅ",
 					"dir" : 6
 				}
 			]
@@ -61,32 +61,32 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Green Brinstar Exit",
+					"name" : "ᐊ Green Brin",
 					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "West Maridia Exit",
+					"name" : "West Maridia ᐅ",
 					"dir" : 5
 				},
 				{
 					"id" : 2,
-					"name" : "Crateria Elevator",
+					"name" : "Crateria ᐃ",
 					"dir" : 4
 				},
 				{
 					"id" : 3,
-					"name" : "The Tank",
+					"name" : "Glass Tube ᐃ",
 					"dir" : 2
 				},
 				{
 					"id" : 4,
-					"name" : "Maridia Exit Lower",
+					"name" : "Maridia East Tunnel ᐅ",
 					"dir" : 6
 				},
 				{
 					"id" : 5,
-					"name" : "Upper Norfair Entrance",
+					"name" : "Upper Norfair ᐅ",
 					"dir" : 3
 				}
 			]
@@ -98,12 +98,12 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Crateria Entrance",
+					"name" : "ᐊ Ocean",
 					"dir" : 2
 				},
 				{
 					"id" : 1,
-					"name" : "Forgotten Highway",
+					"name" : "Forgotten Highway ᐁ",
 					"dir" : 5
 				}
 			]
@@ -115,27 +115,27 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Red Brinstar Entrance",
+					"name" : "ᐊ Red Brin",
 					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "Kraid Entrance",
+					"name" : "Kraid ᐅ",
 					"dir" : 2
 				},
 				{
 					"id" : 2,
-					"name" : "Crocomire Entrance",
+					"name" : "Croc ᐁ",
 					"dir" : 3
 				},
 				{
 					"id" : 3,
-					"name" : "Single Chamber",
+					"name" : "Single Chamber ᐅ",
 					"dir" : 4
 				},
 				{
 					"id" : 4,
-					"name" : "Kronic Boost Room",
+					"name" : "ᐊ Kronic Boost",
 					"dir" : 5
 				}
 			]
@@ -147,12 +147,12 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Elevator Entrance",
+					"name" : "Lava Dive ᐅ",
 					"dir" : 2
 				},
 				{
 					"id" : 1,
-					"name" : "Exit to Single Chamber",
+					"name" : "ᐊ Escape",
 					"dir" : 5
 				}
 			]
@@ -164,22 +164,22 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Exit to Red Brinstar",
+					"name" : "ᐊ Red Brin",
 					"dir" : 1
 				},
 				{
 					"id" : 1,
-					"name" : "Main Street",
+					"name" : "Main Street ᐃ",
 					"dir" : 3
 				},
 				{
 					"id" : 2,
-					"name" : "Entrance to East Maridia",
+					"name" : "Crab Shaft ᐅ",
 					"dir" : 4
 				},
 				{
 					"id" : 3,
-					"name" : "Crab Hole",
+					"name" : "ᐊ Crab Hole",
 					"dir" : 6
 				}
 			]
@@ -191,12 +191,12 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Entrance",
+					"name" : "ᐊ Aquaduct",
 					"dir" : 2
 				},
 				{
 					"id" : 1,
-					"name" : "Exit to Forgotten Highway",
+					"name" : "Forgotten Highway ᐃ",
 					"dir" : 5
 				}
 			]
@@ -208,7 +208,7 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Kraid",
+					"name" : "",
 					"dir" : 1
 				}
 			]
@@ -220,7 +220,7 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Crocomire",
+					"name" : "",
 					"dir" : 1
 				}
 			]
@@ -232,7 +232,7 @@
 			"portals" : [
 				{
 					"id" : 0,
-					"name" : "Tourian",
+					"name" : "",
 					"dir" : 1
 				}
 			]

@@ -65,6 +65,7 @@ footer,header,hgroup,menu,nav,section,summary, video {
 
 html {
 	font-size: 100%;
+	background-color: #333;
 }
 
 .toggletext, .toggleitems, .togglebosses {
@@ -78,12 +79,16 @@ html {
     margin-bottom: 4px;
 }
 
+.app {
+	width: 1024px;
+}
+
 
 canvas {
 	position: absolute;
     top: 0;
     left: 0;
-    width: 85%;
+    width: 870px;
     height: 700px;
     z-index: 30;
     pointer-events: none;
@@ -115,11 +120,8 @@ canvas {
     width: 90em;
     height: 40em;
 */
-	width: 85%;
-	height: 100%;
-    min-height: 700px;
-    max-width: 2048px;
-    min-width: 800px;
+	width: 870px;
+	height: 700px;
     background-color: #000;
     overflow: hidden;
     z-index: 3;
@@ -203,7 +205,7 @@ h2.hidelabels {
     text-align: center;
     font-weight: normal;
     opacity: 0.6;
-    position: absolute
+    position: absolute;
 }
 
 
@@ -237,8 +239,8 @@ h2.hidelabels {
 
 
 .zone4 h2 {
-    top: 4.6em;
-    left: 3em;
+    top: 2.6em;
+    left: -7em;
 	color: rgb(255, 128, 88);
 	min-width: 7em;
 }
@@ -279,8 +281,8 @@ h2.hidelabels {
 }
 
 .zone10 h2 {
-	left: -2.3em;
-    top: -0.65em;
+	left: 3em;
+    top: 1em;
     color: rgb(212, 212, 212);
 }
 
@@ -308,37 +310,37 @@ h2.hidelabels {
 
 .mapview .zone4 {
     left: 46%;
-    top: 58.5%;
+    top: 47.5%;
 }
 
 .mapview .zone5 {
-    left: 64%;
-    top: 67%;
+    left: 62%;
+    top: 54%;
 }
 
 .mapview .zone6 {
-    left: 61%;
-    top: 26%;
+    left: 50%;
+    top: 23%;
 }
 
 .mapview .zone7 {
-	left: 76%;
-    top: 30%;
+	left: 65%;
+    top: 26%;
 }
 
 .mapview .zone8 {
-    left: 44.3%;
-    top: 47%;
+    left: 49%;
+    top: 39%;
 }
 
 .mapview .zone9 {
 	left: 46.2%;
-    top: 76%;
+    top: 63%;
 }
 
 .mapview .zone10 {
-    left: 25%;
-    top: 18%;
+    left: 28%;
+    top: 18.5%;
 }
 
 
@@ -485,7 +487,7 @@ h2.hidelabels {
 	top: -2em;
 }
 .zone4 .items {
-	left: 10.1em;
+	left: -4.1em;
 	top: 4.5em;
 }
 .zone5 .items {
@@ -586,6 +588,15 @@ h2.hidelabels {
 
 .portal p {
 	display: none;
+	position: absolute;
+	font-size: 11px;
+	color: #ddd;
+	font-weight: bold;
+	min-width: 105px;
+}
+
+.portal:hover p {
+	display: block;
 }
 
 .portal.connected:hover {
@@ -786,6 +797,166 @@ h2.hidelabels {
 }
 .zone7 .portal1 {
 	left: 2em;
+}
+
+
+/* Portal Name Styles */
+
+
+.zone0 .portal0 p {
+	top: 2.5em;
+    left: -3em;
+}
+.zone0 .portal1 p {
+	top: 2.5em;
+	left: -1.5em;
+}
+.zone0 .portal2 p {
+	top: 2em;
+	left: -2.5em;
+}
+.zone0 .portal3 p {
+	top: 2.5em;
+	left: -0.5em;
+}
+.zone0 .portal4 p {
+	top: 2.5em;
+	left: 0em;
+}
+
+
+.zone1 .portal0 p {
+	top: 0em;
+	left: 3em;
+}
+.zone1 .portal1 p {
+	top: -2em;
+	left: 0em;
+}
+.zone1 .portal2 p {
+	top: -1.5em;
+	left: 0em;
+}
+
+
+
+.zone2 .portal0 p {
+	top: 6.5em;
+	left: -2.5em;
+}
+.zone2 .portal1 p {
+	top: 0.4em;
+	left: 3em;
+}
+.zone2 .portal2 p {
+	top: 0.4em;
+	left: 3em;
+}
+.zone2 .portal3 p {
+	top: 4.5em;
+	left: -4em;
+}
+.zone2 .portal4 p {
+	top: -0.5em;
+	left: 2.5em;
+}
+.zone2 .portal5 p {
+	top: 2.5em;
+	left: -2.5em;
+}
+
+
+
+.zone3 .portal0 p {
+	top: 2.7em;
+	left: -1em;
+}
+.zone3 .portal1 p {
+	top: 2.7em;
+	left: -4em;
+	width: 120px;
+}
+
+
+
+
+.zone4 .portal0 p {
+	top: -2em;
+	left: -2.5em;
+}
+.zone4 .portal1 p {
+	top: -1.5em;
+	left: -0.5em;
+}
+.zone4 .portal2 p {
+	top: 2.5em;
+	left: -0.5em;
+}
+.zone4 .portal3 p {
+	top: -0.3em;
+	left: 3em;
+	min-width: 80px;
+}
+.zone4 .portal4 p {
+	top: 3em;
+	left: -3em;
+}
+
+
+
+
+.zone5 .portal0 p {
+	top: -2em;
+	left: -1em;
+}
+.zone5 .portal1 p {
+	top: -2em;
+	left: -2.5em;
+}
+
+
+
+.zone6 .portal0 p {
+	top: -0.5em;
+	left: 2.5em;
+}
+.zone6 .portal1 p {
+	top: 3em;
+	left: -2em;
+}
+.zone6 .portal2 p {
+	top: -2em;
+	left: -2em;
+}
+.zone6 .portal3 p {
+	top: 3em;
+	left: -2em;
+}
+
+
+
+.zone7 .portal0 p {
+	top: -2em;
+	left: -2em;
+}
+.zone7 .portal1 p {
+	top: -3em;
+	left: -3em;
+}
+
+
+
+.zone8 .portal0 p {
+	top: 0em;
+	left: 0em;
+}
+.zone9 .portal0 p {
+	top: 0em;
+	left: 0em;
+}
+.zone10 .portal0 p {
+	top: 0em;
+	left: 0em;
 }
 
 
@@ -1036,6 +1207,76 @@ h2.hidelabels {
 	width: 1.9em;
 }
 .zone7 .portal1::before {}
+
+
+
+.portal .partner {
+	width: 10px;
+	height: 20px;
+	left: 10px;
+	position: absolute;
+	border-radius: 0 20px 20px 0;
+	border-left: 1px dashed #fff;
+	display: none;
+}
+
+.zoneview .side .portal.part_crat .partner {
+	display: block;
+	background-color: rgb(248, 209, 50)!important;
+}
+
+.zoneview .side .portal.part_gb .partner {
+	display: block;
+	background-color: rgb(148, 240, 115)!important;
+}
+
+.zoneview .side .portal.part_rb .partner {
+	display: block;
+	background-color: rgb(208, 84, 168)!important;
+}
+
+.zoneview .side .side.portal.part_ws .partner {
+	display: block;
+	background-color: rgb(36, 130, 93)!important;
+}
+
+.zoneview .side .portal.part_un .partner {
+	display: block;
+	background-color: rgb(255, 128, 88)!important;
+}
+
+.zoneview .side .portal.part_ln .partner {
+	display: block;
+	background-color: rgb(197, 82, 81)!important;
+}
+
+.zoneview .side .portal.part_wm .partner {
+	display: block;
+	background-color: rgb(153, 203, 254)!important;
+}
+
+.zoneview .side .portal.part_em .partner {
+	display: block;
+	background-color: rgb(133, 133, 247)!important;
+}
+
+.zoneview .side .portal.part_k .partner {
+	display: block;
+	background-color: rgb(151, 151, 151)!important;
+}
+
+.zoneview .side .portal.part_croc .partner {
+	display: block;
+	background-color: rgb(103, 103, 103)!important;
+}
+
+.zoneview .side .portal.part_t .partner {
+	display: block;
+	background-color: rgb(212, 212, 212)!important;
+}
+
+
+
 
 
 .semi-circle {
