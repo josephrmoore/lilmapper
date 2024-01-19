@@ -65,10 +65,10 @@ footer,header,hgroup,menu,nav,section,summary, video {
 
 html {
 	font-size: 100%;
-	background-color: #333;
+	background-color: #000;
 }
 
-.toggletext, .toggleitems, .togglebosses {
+.toggletext, .toggleitems, .togglebosses, .clear_history {
     background-color: #000;
     padding: 10px;
     border: 2px solid rgba(80,80,100,0.85);
@@ -77,10 +77,38 @@ html {
     width: 100%;
     border-radius: 30px;
     margin-bottom: 4px;
+    cursor: pointer;
+    font-family: "Silkscreen", monospace;
+}
+
+.clear_history {
+	margin-top:300px;
+    background-color: red;
+    border-radius: 0;
 }
 
 .app {
 	width: 1024px;
+}
+
+.home {
+	background: url("i/smxyz_logo.png") no-repeat;
+    display: block;
+    width: 218px;
+    height: 30px;
+    background-size: 218px 30px;
+    text-indent: -9999px;
+    margin: 10px;
+    position: absolute;
+    top: 10px;
+}
+
+h1 {
+	font-size: 48px;
+	color: #fff;
+	text-align: center;
+	font-family: "Silkscreen", monospace;
+	margin: 5px 0;
 }
 
 
@@ -92,6 +120,10 @@ canvas {
     height: 700px;
     z-index: 30;
     pointer-events: none;
+}
+
+.mapwrapper {
+	position: relative;
 }
 
 .items {
@@ -135,8 +167,8 @@ h2.hidelabels {
 .control_panel {
 	width: 15%;
     float: left;
-    height: 700px;
-    background-color: #333;
+    background-color: #000;
+    font-family: "Silkscreen", monospace;
 }
 
 .toggletext.hidden, .toggleitems.hidden, .togglebosses.hidden {
@@ -426,6 +458,7 @@ h2.hidelabels {
 	pointer-events: none;
 }
 
+/*
 .zoneview .zone:nth-child(1 of .side) {
 	display: block;
 	top: 10%;
@@ -458,6 +491,46 @@ h2.hidelabels {
 	scale: 1.0;
 }
 .zoneview .zone:nth-child(6 of .side) {
+	display: block;
+	top: 76.2%;
+	left: 80%;
+	scale: 1.0;
+}
+*/
+
+
+.zoneview .zone.side1 {
+	display: block;
+	top: 10%;
+	left: 10%;
+	scale: 1.0;
+}
+.zoneview .zone.side2 {
+	display: block;
+	top: 42.67%;
+	left: 10%;
+	scale: 1.0;
+}
+.zoneview .zone.side3 {
+	display: block;
+	top: 76.2%;
+	left: 10%;
+	scale: 1.0;
+}
+.zoneview .zone.side4 {
+	display: block;
+	top: 10%;
+	left: 80%;
+	scale: 1.0;
+
+}
+.zoneview .zone.side5 {
+	display: block;
+	top: 46.67%;
+	left: 80%;
+	scale: 1.0;
+}
+.zoneview .zone.side6 {
 	display: block;
 	top: 76.2%;
 	left: 80%;
@@ -601,6 +674,10 @@ h2.hidelabels {
 
 .portal.connected:hover {
 	cursor: default;
+}
+
+.portal.connecting {
+	background-color: rgba(255,255,0,1);
 }
 
 

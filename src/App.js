@@ -12,12 +12,19 @@ function App() {
 	
 	return (
     	<div className="app">
- 			<canvas id="canvas"></canvas>
- 			<Map />
- 			<div className="control_panel">
- 				<button id="toggleText" className="toggletext" onClick={(e) => toggleLabels(e, useLabels)} >Area Name</button>
- 				<button id="toggleItems" className="toggleitems" onClick={(e) => toggleItems(e, useItems)} >Item Count</button>
- 				<button id="toggleBosses" className="togglebosses" onClick={(e) => toggleBosses(e, useBosses)} >Bosses</button>
+    		<header>
+    			<a href="https://supermetroid.xyz" className="home">supermetroid.xyz</a>
+    			<h1>Lil&apos; Mapper</h1>
+    		</header>
+    		<div className="mapwrapper">
+				<canvas id="canvas"></canvas>
+				<Map />
+				<div className="control_panel">
+					<button id="toggleText" className="toggletext" onClick={(e) => toggleLabels(e, useLabels)} >Area Names</button>
+					<button id="toggleItems" className="toggleitems" onClick={(e) => toggleItems(e, useItems)} >Item Count</button>
+					<button id="toggleBosses" className="togglebosses" onClick={(e) => toggleBosses(e, useBosses)} >Bosses</button>
+					<button id="clearHistory" className="clear_history" onClick={(e) => clearHistory(e)} >Clear Map</button>
+				</div>
  			</div>
  		</div>
  	);
@@ -41,13 +48,30 @@ class Map extends React.Component {
 		};
 		this.zones = data.zones;
 		this.mapstatechange = this.mapstatechange.bind(this);	
+		
+		if(typeof localStorage.getItem('connections') !== "string"){
+			localStorage.setItem('connections', '[]');
+		}
+/*
 		if(localStorage.getItem('connections') != '[]'){
 			localStorage.setItem('connections', '[]');
 		}
+*/
 	}
 	
 	mapstatechange(obj){
 		this.setState(obj);
+	}
+	
+	componentDidMount() {
+		drawLines();
+	}
+	
+	componentDidUpdate(){
+		console.log("map updated");
+		if(this.state.view === "zoneview"){
+			placeSides();
+		}
 	}
 	
 	render(){
@@ -98,7 +122,7 @@ class Zone extends React.Component {
 			<div className={"zone zone"+this.props.id+" "+this.state.view} data-id={this.props.id} data-name={this.props.name} data-color={this.props.color} onClick={(e)=> zoneClick(e, this.props.id, this)} onContextMenu={(e)=> zoneRightClick(e.target, this)}>
 				<h2 className={"label"}>{this.props.name}</h2>
 				{this.props.portals.map((datum, key) => {
-					return <Portal key={key} id={datum.id} color={this.props.color} zoneid={this.props.id} state={this.props.state} mapstatechange={this.props.mapstatechange} direction={datum.dir} name={datum.name} />
+					return <Portal key={key} id={datum.id} color={this.props.color} zoneid={this.props.id} state={this.props.state} mapstatechange={this.props.mapstatechange} dir={datum.dir} name={datum.name} />
 				})}
 				<Clickbox type="items" />
 				{(this.props.id === 3 || this.props.id === 5 || this.props.id === 7 || this.props.id === 8) ? (<Clickbox type="bosses" />) : ("")}
@@ -123,15 +147,52 @@ class Portal extends React.Component {
 		this.setState(obj);
 	}
 	
+	componentDidMount(){
+		checkPortalState(this);
+	}
+	
+	componentDidUpdate(){
+		console.log("portal updated");
+		if(this.props.state.view === "zoneview"){
+			placeSides();
+		}
+	}
+	
 	render(){
 		var zoneclass = "nozone";
 		zoneclass = partnerColors(this);
 		
 		return (
-			<div className={"portal portal"+this.props.id+" part_"+ zoneclass +" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")} data-partnercolor={this.state.partner_color}><p className="portal_name">{this.props.name}</p><div className={"partner"}></div></div>
+			<div className={"portal portal"+this.props.id+" part_"+ zoneclass +" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")} data-partnercolor={this.state.partner_color} data-dir={this.props.dir}><p className="portal_name">{this.props.name}</p><div className={"partner"}></div></div>
 	  	);
   	}
 }
+
+function checkPortalState(comp){
+	var cnx_text = localStorage.getItem("connections");
+	let cnx;
+	try {
+			cnx = JSON.parse(cnx_text);
+			if(cnx.length>0){
+				// cnx[i] is individual connections level
+				for(var i=0; i<cnx.length; i++){
+					// cnx[i][j] is each portal in a connection 
+					for(var j=0; j<cnx[i].length; j++){
+						// cnx[i][j][0] is the zone id for a portal
+						// cnx[i][j][1] is the portal id for a portal
+						if(cnx[i][j][0] === Number(comp.props.zoneid) && cnx[i][j][1] === Number(comp.props.id)){
+							comp.portalstatechange({
+								connected : "connected"
+							});
+						}
+					}
+				}
+			}
+		} catch(err) {
+			console.log("JSON error checking portal states");
+		}
+}
+
 
 class Clickbox extends React.Component {
 	
@@ -371,6 +432,7 @@ function clickPortal(comp, e, type){
 					});
 //					console.log(comp.props.state.active_portal);
 					comp.props.state.active_portal.portalstatechange({
+						connected : "connected",
 						partner_color : comp.props.color
 					});
 					comp.props.mapstatechange({
@@ -386,7 +448,7 @@ function clickPortal(comp, e, type){
 					active_portal : comp
 				});
 				comp.portalstatechange({
-					connected : "connected"
+					connected : "connecting"
 				});
 //				console.log(data.zones[comp.props.zoneid].color);
 			}
@@ -447,6 +509,7 @@ function partnerColors(comp){
 			return "t";
 			break;
 		default:
+			return "nozone";
 //			console.log("switch break");
 	}
 //	console.log(comp.state.partner_color);
@@ -487,7 +550,9 @@ function makePartnership(comp, portal1, portal2){
 // DRAWING LINES
 
 function drawLines(){
+//	console.log("drawlines");
 	clearLines();
+	try{
 	var map = document.getElementById("map");
 	var map_mode = map.dataset.mode;
 	var map_main_zone = Number(map.dataset.mainzone);
@@ -550,15 +615,23 @@ function drawLines(){
 			}
 			
 		}
-	} catch (e) {
+	} catch (err) {
 		console.log("local storage connections data not valid JSON");
+	}
+	} catch (err) {
+		console.log("something's broken with draw lines");
 	}
 }
 
 function clearLines(){
-	const canvas = document.getElementById("canvas");
-	const ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	try {
+		const canvas = document.getElementById("canvas");
+//		console.log(canvas);
+		const ctx = canvas.getContext("2d");
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	} catch (err) {
+		console.log("no canvas");
+	}
 }
 
 function checkSides(){
@@ -654,13 +727,86 @@ function shuffle(array) {
 }
 
 
+function clearHistory(){
+	if (window.confirm("Do you REALLY want to clear ALL your map connections? You can't get them back.")) {
+		localStorage.setItem("connections", "[]");
+		// remove connections
+		drawLines();
+	}
+}
+
+
+function placeSides(){
+	console.log("placing sides");
+	// 0-4, 5-7, 8-13, 14-15, 16-20, 21-22, 23-26, 27-28, 29, 30, 31
+	var zoneportalkey = [0,5,8,14,16,21,23,27,29,30,31];
+	var zoneportallengths = [5,3,6,2,5,2,4,2,1,1,1];
+	var portals = document.getElementsByClassName("portal");
+	var zones = document.getElementsByClassName("zone");
+	var main_id = -1;
+	var main_portals = [];
+//	console.log(zones);
+	for(var n=0; n<zones.length; n++){
+		for(var m=0; m<zones[n].classList.length; m++){
+//			console.log(zones[n].classList[m]);
+			if(zones[n].classList[m] === "main"){
+				main_id = Number(zones[n].dataset.id);
+//				console.log(main_id);
+				for(var l=0; l<zoneportallengths[main_id]; l++){
+					var portalkey = Number(zoneportalkey[main_id])+l;
+					for(var k=0; k<portals[portalkey].classList.length; k++){
+//						console.log(portals[portalkey].classList[k]);
+						if(portals[portalkey].classList[k] === "connected"){
+							main_portals.push(portals[portalkey]);
+						}
+					}
+				}
+			}
+		}
+	}
+//	console.log(main_portals);
+//	console.log(portals);
+	var cnx_text = localStorage.getItem("connections");
+	let cnx;
+	try {
+			cnx = JSON.parse(cnx_text);
+			if(cnx.length>0){
+				// cnx[i] is individual connections level
+				for(var i=0; i<cnx.length; i++){
+					// cnx[i][j] is each portal in a connection 
+					for(var j=0; j<cnx[i].length; j++){
+						// cnx[i][j][0] is the zone id for a portal
+						// cnx[i][j][1] is the portal id for a portal
+//						console.log(cnx[i][j]);
+						for(var p=0; p<main_portals.length; p++){
+							var pid = Number(main_portals[p].dataset.id);
+							var zid = Number(main_portals[p].dataset.zoneid);
+							var dir = Number(main_portals[p].dataset.dir);
+							var classname = "side"+dir;
+//							console.log(pid);
+//							console.log(zid);
+//							console.log(dir);
+							if(cnx[i][j][0] === zid && cnx[i][j][1] === pid){
+								if(j===0){
+									// main portal is #1, target is #2
+									zones[cnx[i][1][0]].classList.add(classname);
+								} else if(j===1){
+									// main portal is #2, target is #1
+									zones[cnx[i][0][0]].classList.add(classname);
+								}
+							}
+						}
+					}
+				}				
+			}
+	} catch (err) {
+		console.log("JSON parse error");
+	}
+}
 
 // LISTENERS
 
-window.addEventListener('contextmenu', function (e) {
-  console.log('context menu disabled');
-//  e.preventDefault();
-}, false);
+
 window.addEventListener("transitionstart", function (e) {
 	clearLines();
 });
@@ -670,7 +816,6 @@ window.addEventListener("transitionend", function (e) {
 window.addEventListener("resize", (event) => {
 	drawLines();
 });
-
 
 
 export default App;
