@@ -19,12 +19,6 @@ function App() {
     		<div className="mapwrapper">
 				<canvas id="canvas"></canvas>
 				<Map />
-				<div className="control_panel">
-					<button id="toggleText" className="toggletext" onClick={(e) => toggleLabels(e, useLabels)} >Area Names</button>
-					<button id="toggleItems" className="toggleitems" onClick={(e) => toggleItems(e, useItems)} >Item Count</button>
-					<button id="toggleBosses" className="togglebosses" onClick={(e) => toggleBosses(e, useBosses)} >Bosses</button>
-					<button id="clearHistory" className="clear_history" onClick={(e) => clearHistory(e)} >Clear Map</button>
-				</div>
  			</div>
  		</div>
  	);
@@ -44,19 +38,29 @@ class Map extends React.Component {
 			side_zones : [],
 			main_zone : null,
 			main_comp : null,
-			side_comps : []
+			side_comps : [],
+			haveKraid : false,
+			havePhantoon : false,
+			haveDraygon : false,
+			haveRidley : false
 		};
 		this.zones = data.zones;
 		this.mapstatechange = this.mapstatechange.bind(this);	
 		
 		if(typeof localStorage.getItem('connections') !== "string"){
+			// It has never been set before
 			localStorage.setItem('connections', '[]');
+		} else {
+			var cnx = storageToJSON();
+			if(cnx){
+				this.state.connections = JSON.stringify(cnx);
+			}
+			// set connections to whatever is stored in local storage
+			// get local storage string
+			// parse to json
+			// add [] from json to connections var
 		}
-/*
-		if(localStorage.getItem('connections') != '[]'){
-			localStorage.setItem('connections', '[]');
-		}
-*/
+
 	}
 	
 	mapstatechange(obj){
@@ -74,14 +78,26 @@ class Map extends React.Component {
 		}
 	}
 	
+	resetConnections(){
+		this.state.connections = "[]";
+	}
+	
 	render(){
 		var newstyle = this.props.color;
 		return (
-    <div id="map" className={"map "+this.state.view} onClick={(e)=> mapView(this, "map")} onContextMenu={(e)=> mapRightClick(this, "map")} data-mode={this.state.view} data-mainzone={this.state.main_zone}>
- 		{this.zones.map((datum, key) => {
-			return <Zone key={key} id={datum.id} name={datum.name} color={datum.color} portals={datum.portals} state={this.state} mapstatechange={this.mapstatechange} />
-		})}
-    </div>
+			<div className="controlsWrapper">			
+			    <div id="map" className={"map "+this.state.view} onClick={(e)=> mapView(this, "map")} onContextMenu={(e)=> mapRightClick(this, "map")} data-mode={this.state.view} data-mainzone={this.state.main_zone}>
+			 		{this.zones.map((datum, key) => {
+						return <Zone key={key} id={datum.id} name={datum.name} color={datum.color} portals={datum.portals} state={this.state} mapstatechange={this.mapstatechange} />
+					})}
+			    </div>
+				<div className="control_panel">
+					<button id="toggleText" className="toggletext" onClick={(e) => toggleLabels(e, useLabels)} >Area Names</button>
+					<button id="toggleItems" className="toggleitems" onClick={(e) => toggleItems(e, useItems)} >Item Count</button>
+					<button id="toggleBosses" className="togglebosses" onClick={(e) => toggleBosses(e, useBosses)} >Bosses</button>
+					<button id="clearHistory" className="clear_history" onClick={(e) => clearHistory(e, this)} >Clear Map</button>
+				</div>
+			</div>
 		);
 	}
 }
@@ -149,6 +165,7 @@ class Portal extends React.Component {
 	
 	componentDidMount(){
 		checkPortalState(this);
+		console.log("portal mounted");
 	}
 	
 	componentDidUpdate(){
@@ -169,28 +186,49 @@ class Portal extends React.Component {
 }
 
 function checkPortalState(comp){
-	var cnx_text = localStorage.getItem("connections");
-	let cnx;
-	try {
-			cnx = JSON.parse(cnx_text);
-			if(cnx.length>0){
-				// cnx[i] is individual connections level
-				for(var i=0; i<cnx.length; i++){
-					// cnx[i][j] is each portal in a connection 
-					for(var j=0; j<cnx[i].length; j++){
-						// cnx[i][j][0] is the zone id for a portal
-						// cnx[i][j][1] is the portal id for a portal
-						if(cnx[i][j][0] === Number(comp.props.zoneid) && cnx[i][j][1] === Number(comp.props.id)){
+	var cnx = storageToJSON();
+	if(cnx){
+		if(cnx.length>0){
+			console.log(comp.state.connected);
+//			comp.state.connected = "unassigned";
+			// cnx[i] is individual connections level
+			for(var i=0; i<cnx.length; i++){
+				// cnx[i][j] is each portal in a connection 
+				for(var j=0; j<cnx[i].length; j++){
+					// cnx[i][j][0] is the zone id for a portal
+					// cnx[i][j][1] is the portal id for a portal
+					if(cnx[i][j][0] === Number(comp.props.zoneid) && cnx[i][j][1] === Number(comp.props.id)){
+						console.log(comp.state.connected);
+						try{
 							comp.portalstatechange({
 								connected : "connected"
 							});
+						} catch (err) {
+							console.log("first one failed");
+							try {
+								comp.state.connected = "connected";
+							} catch (err) {
+								console.log("portal state error with trys")
+							}
 						}
 					}
 				}
 			}
-		} catch(err) {
-			console.log("JSON error checking portal states");
 		}
+	}
+}
+
+function storageToJSON(){
+	var cnx_text = localStorage.getItem("connections");
+	let cnx;
+	try {
+		cnx = JSON.parse(cnx_text);
+		return cnx;
+	} catch (err){
+		console.log(err);
+		console.log("JSON Parse error from localstorage string");
+		return false;
+	}
 }
 
 
@@ -466,6 +504,14 @@ function clickPortal(comp, e, type){
 					partner_color : ""
 				});
 			}
+			if(comp.state.connected==="connected"){
+				// get connections from JSON
+				// find cnx same as this portal
+				// change portal state for both portals to unassigned
+				// delete cnx item in array
+				// save to map connections & localstorage
+
+			}
 		} catch (err){
 			console.log("no active portal");
 		}
@@ -565,9 +611,8 @@ function drawLines(){
 	const ctx = canvas.getContext("2d");
 	canvas.width  = canvas.offsetWidth;
 	canvas.height = canvas.offsetHeight;
-	let cnx;
-	try {
-		cnx = JSON.parse(connections);
+	var cnx = storageToJSON();
+	if(cnx){
 		for(var i=0; i<cnx.length; i++){
 			// all connections loop		
 			if(map_mode === "mapview" || map_main_zone === cnx[i][0][0] || map_main_zone === cnx[i][1][0]){
@@ -613,11 +658,9 @@ function drawLines(){
 					// Do css/canvas semicircles
 				}
 			}
-			
-		}
-	} catch (err) {
-		console.log("local storage connections data not valid JSON");
+		}	
 	}
+
 	} catch (err) {
 		console.log("something's broken with draw lines");
 	}
@@ -633,16 +676,6 @@ function clearLines(){
 		console.log("no canvas");
 	}
 }
-
-function checkSides(){
-	// get main zone
-	// get all connected portals from main zone
-	// for each connected portal:
-		// get dir
-		// get partner zone
-		// add dir class to partner zone
-}
-
 
 // APP FEATURES
 
@@ -727,11 +760,15 @@ function shuffle(array) {
 }
 
 
-function clearHistory(){
+function clearHistory(e, comp){
 	if (window.confirm("Do you REALLY want to clear ALL your map connections? You can't get them back.")) {
 		localStorage.setItem("connections", "[]");
+		// use handler to reset map state "connections"
+		comp.resetConnections();
+//		comp.resetConnections();
 		// remove connections
-		drawLines();
+//		drawLines();
+		window.location.reload();
 	}
 }
 
@@ -766,41 +803,38 @@ function placeSides(){
 	}
 //	console.log(main_portals);
 //	console.log(portals);
-	var cnx_text = localStorage.getItem("connections");
-	let cnx;
-	try {
-			cnx = JSON.parse(cnx_text);
-			if(cnx.length>0){
-				// cnx[i] is individual connections level
-				for(var i=0; i<cnx.length; i++){
-					// cnx[i][j] is each portal in a connection 
-					for(var j=0; j<cnx[i].length; j++){
-						// cnx[i][j][0] is the zone id for a portal
-						// cnx[i][j][1] is the portal id for a portal
+
+	var cnx = storageToJSON();
+	if(cnx){
+		if(cnx.length>0){
+			// cnx[i] is individual connections level
+			for(var i=0; i<cnx.length; i++){
+				// cnx[i][j] is each portal in a connection 
+				for(var j=0; j<cnx[i].length; j++){
+					// cnx[i][j][0] is the zone id for a portal
+					// cnx[i][j][1] is the portal id for a portal
 //						console.log(cnx[i][j]);
-						for(var p=0; p<main_portals.length; p++){
-							var pid = Number(main_portals[p].dataset.id);
-							var zid = Number(main_portals[p].dataset.zoneid);
-							var dir = Number(main_portals[p].dataset.dir);
-							var classname = "side"+dir;
+					for(var p=0; p<main_portals.length; p++){
+						var pid = Number(main_portals[p].dataset.id);
+						var zid = Number(main_portals[p].dataset.zoneid);
+						var dir = Number(main_portals[p].dataset.dir);
+						var classname = "side"+dir;
 //							console.log(pid);
 //							console.log(zid);
 //							console.log(dir);
-							if(cnx[i][j][0] === zid && cnx[i][j][1] === pid){
-								if(j===0){
-									// main portal is #1, target is #2
-									zones[cnx[i][1][0]].classList.add(classname);
-								} else if(j===1){
-									// main portal is #2, target is #1
-									zones[cnx[i][0][0]].classList.add(classname);
-								}
+						if(cnx[i][j][0] === zid && cnx[i][j][1] === pid){
+							if(j===0){
+								// main portal is #1, target is #2
+								zones[cnx[i][1][0]].classList.add(classname);
+							} else if(j===1){
+								// main portal is #2, target is #1
+								zones[cnx[i][0][0]].classList.add(classname);
 							}
 						}
 					}
-				}				
-			}
-	} catch (err) {
-		console.log("JSON parse error");
+				}
+			}				
+		}	
 	}
 }
 
