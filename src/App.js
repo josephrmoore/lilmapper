@@ -39,10 +39,7 @@ class Map extends React.Component {
 			main_zone : null,
 			main_comp : null,
 			side_comps : [],
-			haveKraid : false,
-			havePhantoon : false,
-			haveDraygon : false,
-			haveRidley : false
+			bossUsed : [false, false, false, false]
 		};
 		this.zones = data.zones;
 		this.mapstatechange = this.mapstatechange.bind(this);	
@@ -51,7 +48,7 @@ class Map extends React.Component {
 			// It has never been set before
 			localStorage.setItem('connections', '[]');
 		} else {
-			var cnx = storageToJSON();
+			var cnx = storageToJSON("connections");
 			if(cnx){
 				this.state.connections = JSON.stringify(cnx);
 			}
@@ -69,13 +66,21 @@ class Map extends React.Component {
 	
 	componentDidMount() {
 		drawLines();
+		checkToggles();
+		// load LS values for items and bosses
+//		loadBosses(this.state.bossUsed);
 	}
 	
 	componentDidUpdate(){
-		console.log("map updated");
+//		console.log("map updated");
 		if(this.state.view === "zoneview"){
 			placeSides();
 		}
+		// check for boss and items values to save to LS
+//		saveBosses(this.state.bossUsed);
+		
+//		console.log("MAP UPDATED:");
+//		console.log(this.state.bossUsed);
 	}
 	
 	resetConnections(){
@@ -140,8 +145,8 @@ class Zone extends React.Component {
 				{this.props.portals.map((datum, key) => {
 					return <Portal key={key} id={datum.id} color={this.props.color} zoneid={this.props.id} state={this.props.state} mapstatechange={this.props.mapstatechange} dir={datum.dir} name={datum.name} />
 				})}
-				<Clickbox type="items" />
-				{(this.props.id === 3 || this.props.id === 5 || this.props.id === 7 || this.props.id === 8) ? (<Clickbox type="bosses" />) : ("")}
+				<Clickbox type="items" mapstate={this.props.state} mapstatechange={this.props.mapstatechange} zoneid={this.props.id} />
+				{(this.props.id === 3 || this.props.id === 5 || this.props.id === 7 || this.props.id === 8) ? (<Clickbox zoneid={this.props.id} type="bosses" mapstate={this.props.state} mapstatechange={this.props.mapstatechange} />) : ("")}
 				
 	      	</div>
 		);
@@ -173,23 +178,131 @@ class Portal extends React.Component {
 		if(this.props.state.view === "zoneview"){
 			placeSides();
 		}
+		portalCnx();
 	}
 	
 	render(){
+/*
 		var zoneclass = "nozone";
 		zoneclass = partnerColors(this);
+*/
 		
 		return (
-			<div className={"portal portal"+this.props.id+" part_"+ zoneclass +" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")} data-partnercolor={this.state.partner_color} data-dir={this.props.dir}><p className="portal_name">{this.props.name}</p><div className={"partner"}></div></div>
+			<div className={"portal portal"+this.props.id+" "+ this.state.connected} data-id={this.props.id} data-zoneid={this.props.zoneid} onClick={(e)=> clickPortal(this, e, "left")} onContextMenu={(e)=> clickPortal(this, e, "right")} data-partnercolor={this.state.partner_color} data-dir={this.props.dir}><p className="portal_name">{this.props.name}</p><div className={"partner"}></div></div>
 	  	);
   	}
 }
 
-function checkPortalState(comp){
-	var cnx = storageToJSON();
+
+function loadBosses(arr){
+	var bosses = storageToJSON("bosses");
+	if(bosses){
+		arr = bosses;
+		console.log("boss");
+	} else {
+		console.log("nobosses");
+	}
+}
+
+function saveBosses(arr){
+	console.log("saveBosses");
+	console.log(arr);
+	localStorage.setItem("bosses", JSON.stringify(arr));
+}
+
+function loadItems(comp){
+	if(comp.state.type==="items"){
+		for(var i=0; i<11; i++){
+			var key = "zone"+i;
+			var val = localStorage.getItem(key);
+	//		console.log(val);
+	//		console.log(comp.props.zoneid);
+			if(typeof val==="string" && Number(comp.props.zoneid)===i){
+	//			console.log("sgsgsgh");
+				comp.clickboxstatechange({
+					value: val
+				});
+			}
+//			console.log(comp.props.type);
+//			console.log(val);
+		}	
+	}
+}
+
+
+function portalCnx(){
+	var cnx = storageToJSON("connections");
 	if(cnx){
 		if(cnx.length>0){
-			console.log(comp.state.connected);
+			// cnx[i] is individual connections level
+			for(var i=0; i<cnx.length; i++){		
+				// cnx[i][j][0] is the zone id for a portal
+				// cnx[i][j][1] is the portal id for a portal
+				var p1 = document.querySelectorAll((".zone"+cnx[i][0][0]+" .portal"+cnx[i][0][1]));
+				var p2 = document.querySelectorAll((".zone"+cnx[i][1][0]+" .portal"+cnx[i][1][1]));
+//					console.log(p1);
+//					console.log(p2);
+
+				var zoneclass1 =  partClass(cnx[i][0][0]);
+				var zoneclass2 =  partClass(cnx[i][1][0]);
+//					console.log(zoneclass1);
+//					console.log(zoneclass2);
+//					console.log(p1[0].classList);
+//					console.log(p2[0].classList);
+				p1[0].classList.add(zoneclass2);
+				p2[0].classList.add(zoneclass1);
+
+			}
+		}
+	}
+}
+
+function partClass(zoneid){
+	switch(zoneid){
+		case 0:
+			return "part_crat";
+			break;
+		case 1:
+			return "part_gb";
+			break;
+		case 2:
+			return "part_rb";
+			break;
+		case 3:
+			return "part_ws";
+			break;
+		case 4:
+			return "part_un";
+			break;
+		case 5:
+			return "part_ln";
+			break;
+		case 6:
+			return "part_wm";
+			break;
+		case 7:
+			return "part_em";
+			break;
+		case 8:
+			return "part_k";
+			break;
+		case 9:
+			return "part_croc";
+			break;
+		case 10:
+			return "part_t";
+			break;
+		default:
+			return "nozone";
+			break;
+	}
+}
+
+function checkPortalState(comp){
+	var cnx = storageToJSON("connections");
+	if(cnx){
+		if(cnx.length>0){
+//			console.log(comp.state.connected);
 //			comp.state.connected = "unassigned";
 			// cnx[i] is individual connections level
 			for(var i=0; i<cnx.length; i++){
@@ -198,7 +311,7 @@ function checkPortalState(comp){
 					// cnx[i][j][0] is the zone id for a portal
 					// cnx[i][j][1] is the portal id for a portal
 					if(cnx[i][j][0] === Number(comp.props.zoneid) && cnx[i][j][1] === Number(comp.props.id)){
-						console.log(comp.state.connected);
+//						console.log(comp.state.connected);
 						try{
 							comp.portalstatechange({
 								connected : "connected"
@@ -216,10 +329,11 @@ function checkPortalState(comp){
 			}
 		}
 	}
+	portalCnx();
 }
 
-function storageToJSON(){
-	var cnx_text = localStorage.getItem("connections");
+function storageToJSON(item){
+	var cnx_text = localStorage.getItem(item);
 	let cnx;
 	try {
 		cnx = JSON.parse(cnx_text);
@@ -236,11 +350,14 @@ class Clickbox extends React.Component {
 	
 	constructor(props) {
 		super(props);
+		var init_val = (this.props.type==="items") ? 0 : 4;
+//		console.log(init_val);
 		this.state = {
 			// type: items, bosses
 			type : this.props.type,
-			value: 0,
-			boss: "unknown"
+			value: init_val,
+			boss: "unknown",
+			zoneid: this.props.zoneid
 		};
 		this.clickboxstatechange = this.clickboxstatechange.bind(this);	
 	}
@@ -249,47 +366,520 @@ class Clickbox extends React.Component {
 		this.setState(obj);
 	}
 	
+	componentDidMount(){
+		loadItems(this);
+	}
+	
 	render(){
 		return (
-			<div className={"clickbox "+this.state.type+" "+((this.state.boss)?this.state.boss:"")} onClick={(e)=> clickClickbox(e, this, "left")} onContextMenu={(e)=> clickClickbox(e, this, "right")}><span className={"value"}>{(this.state.type === "items") ? this.state.value : ""}</span></div>
+			<div id={"clickbox_zone_"+this.state.zoneid} className={"clickbox "+this.state.type+" "+((this.state.boss)?this.state.boss:"")} onClick={(e)=> clickClickbox(e, this, "left")} onContextMenu={(e)=> clickClickbox(e, this, "right")}><span className={"value"}>{(this.state.type === "items") ? this.state.value : ""}</span></div>
 	  	);
   	}
 }
 
 
+function setBosses(thisboss, nextorprev, props){
+	var k = props.mapstate.bossUsed[0];
+	var p = props.mapstate.bossUsed[1];
+	var d = props.mapstate.bossUsed[2];
+	var r = props.mapstate.bossUsed[3];
+	var newarr = [k,p,d,r];
+	newarr[thisboss] = false;
+	newarr[nextorprev] = true;
+	props.mapstatechange({
+		bossUsed : newarr
+	});
+}
+
+
+/*
+function bossToggle(boss, bool, props, targetid, clickid){
+	console.log("BOSS TOGGLE");
+	console.log(targetid);
+	console.log(clickid);
+	var k = props.mapstate.bossUsed[0];
+	var p = props.mapstate.bossUsed[1];
+	var d = props.mapstate.bossUsed[2];
+	var r = props.mapstate.bossUsed[3];	
+	var targetnum = Number(targetid[targetid.length-1]);
+	switch(boss){
+		case 0:
+			console.log("case 0");
+			console.log("boss: "+boss);
+			console.log("bool: "+bool);
+			console.log("MAP STATE:");
+			console.log(props.mapstate);
+
+			props.mapstatechange({
+				bossUsed : [bool, p, d, r]
+			});
+			break;
+		case 1:
+			console.log("case 1");
+			console.log("boss: "+boss);
+			console.log("bool: "+bool);
+			console.log("MAP STATE:");
+			console.log(props.mapstate);
+			props.mapstatechange({
+				bossUsed : [k, bool, d, r]
+			});
+			break;
+		case 2:
+			console.log("case 2");
+			console.log("boss: "+boss);
+			console.log("bool: "+bool);
+			console.log("MAP STATE:");
+			console.log(props.mapstate);
+			props.mapstatechange({
+				bossUsed : [k, p, bool, r]
+			});
+			break;
+		case 3:
+			console.log("case 3");
+			console.log("boss: "+boss);
+			console.log("bool: "+bool);
+			console.log("MAP STATE:");
+			console.log(props.mapstate);
+//			console.log(props.mapstate);
+			props.mapstatechange({
+				bossUsed : [k, p, d, bool]
+			});
+			break;
+		default:
+			console.log("case 4");
+			console.log("boss: "+boss);
+			console.log("MAP STATE:");
+			console.log(props.mapstate);
+	}
+	//console.log(props.mapstate.bossUsed);
+	console.log("END BOSS TOGGLE");
+}
+*/
+
+/*
+
+function assignBoss(boss, lastBoss, props){
+//	console.log("inside assign fx");
+//	console.log(lastBoss);
+//	console.log(typeof lastBoss);
+//console.log(props.mapstatechange);
+	switch(lastBoss){
+		case 0:
+			console.log("case 0");
+			props.mapstatechange({
+				haveKraid : false,
+				bossUsed : [false, props.mapstate.bossUsed[1], props.mapstate.bossUsed[2], props.mapstate.bossUsed[3]]
+			});
+			console.log(props.mapstate.bossUsed);
+			break;
+		case 1:
+			console.log("case 1");
+			props.mapstatechange({
+				havePhantoon : false,
+				bossUsed : [props.mapstate.bossUsed[0], false, props.mapstate.bossUsed[2], props.mapstate.bossUsed[3]]
+			});
+			console.log(props.mapstate.bossUsed);
+			break;
+		case 2:
+			console.log("case 2");
+			props.mapstatechange({
+				haveDraygon : false,
+				bossUsed : [props.mapstate.bossUsed[0], props.mapstate.bossUsed[1], false, props.mapstate.bossUsed[3]]
+			});
+			console.log(props.mapstate.bossUsed);
+			break;
+		case 3:
+			console.log("case 3");
+			console.log(props.mapstate);
+			props.mapstatechange({
+				haveRidley : false,
+				bossUsed : [props.mapstate.bossUsed[0], props.mapstate.bossUsed[1], props.mapstate.bossUsed[2], false]
+			});
+			console.log(props.mapstate.bossUsed);
+			break;
+		default:
+			console.log("prev boss was unassigned (the ? pic)");
+	}
+			console.log(props.mapstate);
+//	console.log(props.mapstate.bossUsed);
+	switch(boss){
+		case 0:
+			props.mapstatechange({
+				haveKraid : true,
+				bossUsed : [true, props.mapstate.bossUsed[1], props.mapstate.bossUsed[2], props.mapstate.bossUsed[3]]
+			});
+			break;
+		case 1:
+			props.mapstatechange({
+				havePhantoon : true,
+				bossUsed : [props.mapstate.bossUsed[0], true, props.mapstate.bossUsed[2], props.mapstate.bossUsed[3]]
+			});
+			break;
+		case 2:
+			props.mapstatechange({
+				haveDraygon : true,
+				bossUsed : [props.mapstate.bossUsed[0], props.mapstate.bossUsed[1], true, props.mapstate.bossUsed[3]]
+			});
+			break;
+		case 3:
+			props.mapstatechange({
+				haveRidley : true,
+				bossUsed : [props.mapstate.bossUsed[0], props.mapstate.bossUsed[1], props.mapstate.bossUsed[2], true]
+			});
+			break;
+		default:
+			console.log("switch error, boss ids");
+	}
+	
+//	console.log(props.mapstatechange);
+}
+*/
+
+
 function clickClickbox(e, comp, dir){
+//	console.log(e.target);
+//	console.log("CLICKCLICKBOX FX");
+// 	console.log(comp.props.zoneid);
 	var all_bosses = ["kraid", "phantoon", "draygon", "ridley", "unknown"];
 	e.preventDefault();
 	e.stopPropagation();
-	var maxvalue;
+	var maxvalue = 4;
 	if(comp.state.type === "bosses"){
-		maxvalue = all_bosses.length-1;
+		var thisboss = Number(comp.state.value);
+		var nextboss, prevboss;
+		switch(thisboss){
+			case 0:
+				prevboss = 4;
+				if(!comp.props.mapstate.bossUsed[1]){
+					nextboss = 1;
+				} else if(!comp.props.mapstate.bossUsed[2]){
+					nextboss = 2;
+				} else if (!comp.props.mapstate.bossUsed[3]){
+					nextboss = 3;
+				} else if (!comp.props.mapstate.bossUsed[4]){
+					nextboss = 4;
+				}
+/*
+				console.log("0");
+				console.log("this: "+thisboss);
+				console.log("next: "+nextboss);
+				console.log("prev: "+prevboss);
+				console.log("BOSS USED:");
+				console.log(comp.props.mapstate.bossUsed);
+*/
+				break;
+			case 1:
+				if(!comp.props.mapstate.bossUsed[2]){
+					nextboss = 2;
+				} else if(!comp.props.mapstate.bossUsed[3]){
+					nextboss = 3;
+				} else {
+					nextboss = 4;
+				}
+				if(!comp.props.mapstate.bossUsed[0]){
+					prevboss = 0;
+				} else {
+					prevboss = 4;
+				}
+/*
+				console.log("1");
+				console.log("this: "+thisboss);
+				console.log("next: "+nextboss);
+				console.log("prev: "+prevboss);
+				console.log("BOSS USED:");
+				console.log(comp.props.mapstate.bossUsed);
+*/
+				break;
+			case 2:
+				if(!comp.props.mapstate.bossUsed[3]){
+					nextboss = 3;
+				} else {
+					nextboss = 4;
+				}
+				if(!comp.props.mapstate.bossUsed[1]){
+					prevboss = 1;
+				} else if(!comp.props.mapstate.bossUsed[0]){
+					prevboss = 0;
+				} else {
+					prevboss = 4;
+				}
+/*
+				console.log("2");
+				console.log("this: "+thisboss);
+				console.log("next: "+nextboss);
+				console.log("prev: "+prevboss);
+				console.log("BOSS USED:");
+				console.log(comp.props.mapstate.bossUsed);
+*/
+				break;
+			case 3:
+				nextboss = 4;
+				if(!comp.props.mapstate.bossUsed[2]){
+					prevboss = 2;
+				} else if(!comp.props.mapstate.bossUsed[1]){
+					prevboss = 1;
+				} else if(!comp.props.mapstate.bossUsed[0]){
+					prevboss = 0;
+				} else {
+					prevboss = 4;
+				}
+/*
+				console.log("3");
+				console.log("this: "+thisboss);
+				console.log("next: "+nextboss);
+				console.log("prev: "+prevboss);
+				console.log("BOSS USED:");
+				console.log(comp.props.mapstate.bossUsed);
+*/
+				break;
+			case 4:
+//				console.log("case 4");
+				if(!comp.props.mapstate.bossUsed[0]){
+					nextboss = 0;
+				} else if(!comp.props.mapstate.bossUsed[1]){
+					nextboss = 1;
+				} else if(!comp.props.mapstate.bossUsed[2]){
+					nextboss = 2;
+				} else if (!comp.props.mapstate.bossUsed[3]){
+					nextboss = 3;
+				} else {
+					nextboss = 4;
+				}
+/*
+				console.log("4a");
+				console.log("this: "+thisboss);
+				console.log("next: "+nextboss);
+				console.log("prev: "+prevboss);
+				console.log("BOSS USED:");
+				console.log(comp.props.mapstate.bossUsed);
+*/
+				if(!comp.props.mapstate.bossUsed[3]){
+					prevboss = 3;
+				} else if(!comp.props.mapstate.bossUsed[2]){
+					prevboss = 2;
+				} else if(!comp.props.mapstate.bossUsed[1]){
+					prevboss = 1;
+				} else if(!comp.props.mapstate.bossUsed[0]){
+					prevboss = 0;
+				} else {
+					prevboss = 4;
+				}
+/*
+				console.log("4b");
+				console.log("this: "+thisboss);
+				console.log("next: "+nextboss);
+				console.log("prev: "+prevboss);
+				console.log("BOSS USED:");
+				console.log(comp.props.mapstate.bossUsed);
+*/
+				break;
+			default:
+				console.log("switch error: clickClickbox");
+		}
+//		console.log(comp.props.mapstate.bossUsed);
+		if(dir === "left"){
+			// left click
+/*
+			console.log("left a");
+			console.log("this: "+thisboss);
+			console.log("next: "+nextboss);
+			console.log("prev: "+prevboss);
+			console.log("BOSS USED:");
+			console.log(comp.props.mapstate.bossUsed);
+*/
+			setBosses(thisboss, nextboss, comp.props);
+			comp.clickboxstatechange({
+				value : nextboss,
+				boss : all_bosses[nextboss]
+			});
+//			console.log(comp.props.mapstate);
+/*
+			bossToggle(nextboss, true, comp.props, e.target.id, comp.props.zoneid);
+			bossToggle(thisboss, false, comp.props, e.target.id, comp.props.zoneid);
+*/
+/*
+			console.log("left b");
+			console.log("this: "+thisboss);
+			console.log("next: "+nextboss);
+			console.log("prev: "+prevboss);
+			console.log("BOSS USED:");
+			console.log(comp.props.mapstate.bossUsed);
+*/
+		} else {
+			// right click
+/*
+			console.log("right a");
+			console.log("this: "+thisboss);
+			console.log("next: "+nextboss);
+			console.log("prev: "+prevboss);
+			console.log("BOSS USED:");
+			console.log(comp.props.mapstate.bossUsed);
+*/
+			setBosses(thisboss, prevboss, comp.props);
+/*
+			bossToggle(thisboss, false, comp.props, e.target.id, comp.props.zoneid);
+			bossToggle(prevboss, true, comp.props, e.target.id, comp.props.zoneid);
+*/
+/*
+			console.log("right b");
+			console.log("this: "+thisboss);
+			console.log("next: "+nextboss);
+			console.log("prev: "+prevboss);
+			console.log("BOSS USED:");
+			console.log(comp.props.mapstate.bossUsed);
+*/
+			comp.clickboxstatechange({
+				value : prevboss,
+				boss : all_bosses[prevboss]
+			});
+/*
+			console.log("MAP STATE:");
+			console.log(comp.props.mapstate);
+*/
+		}
+	} else if(comp.state.type === "items"){
+		var zone = "zone"+comp.props.zoneid;
+		var newval = null;
+		maxvalue = 9;
+		if(!comp.state.value){
+			newval = 0;
+		}
 		if(dir === "left"){
 			// left click
 			if(comp.state.value < maxvalue){
-				comp.clickboxstatechange({
-					value : (Number(comp.state.value)+1),
-					boss : all_bosses[(Number(comp.state.value)+1)]
-				});
+				newval = (Number(comp.state.value)+1);
 			} else {
-				comp.clickboxstatechange({
-					value : 0,
-					boss : all_bosses[0]
-				});
+				newval = 0;
 			}
 		} else if (dir === "right"){
 			// right click
 			if(comp.state.value > 0){
-				comp.clickboxstatechange({
-					value : (Number(comp.state.value)-1),
-					boss : all_bosses[(Number(comp.state.value)-1)]
-				});
+				newval = (Number(comp.state.value)-1)
 			} else {
-				comp.clickboxstatechange({
-					value : maxvalue,
-					boss : all_bosses[maxvalue]
-				});
+				newval = maxvalue;
 			}
+		}
+		comp.clickboxstatechange({
+			value : newval
+		});
+		localStorage.setItem(zone, newval);
+	}
+//	console.log("END CLICKCLICKBOX FX");
+}
+
+
+
+
+/*
+function clickClickbox(e, comp, dir){
+	var all_bosses = ["kraid", "phantoon", "draygon", "ridley", "unknown"];
+	e.preventDefault();
+	e.stopPropagation();
+	var maxvalue = 4;
+	if(comp.state.type === "bosses"){
+		
+		var click_val = Number(comp.state.value);
+
+		var avail_bosses = [];
+		for(var i=0; i<comp.props.mapstate.bossUsed.length; i++){
+			if(!comp.props.mapstate.bossUsed[i]){
+				avail_bosses.push(i);
+			}
+		}
+		avail_bosses.push(4);
+		var max_avail = avail_bosses.length;
+//		console.log(avail_bosses);
+
+//		var click_val = 0;
+//		console.log(comp.state.value);
+
+
+		for(var i=0; i<max_avail; i++){
+			if(avail_bosses[i]===Number(comp.state.value)){
+				click_val = i;
+			}
+		}
+		
+
+		var thisboss, nextboss, prevboss;
+
+		if(max_avail===1){
+			// only unknown
+			thisboss = click_val;
+			nextboss = click_val;
+			prevboss = click_val;
+		console.log(max_avail);
+		console.log(thisboss);
+		console.log(nextboss);
+		console.log(prevboss);
+		} else if(max_avail===2){
+			// only unknown & one other boss
+			if(click_val===4){
+				thisboss = click_val;
+				nextboss = avail_bosses[0];
+				prevboss = avail_bosses[0];
+			} else {
+				thisboss = click_val;
+				nextboss = 4;
+				prevboss = 4;
+			}
+		console.log(max_avail);
+		console.log(thisboss);
+		console.log(nextboss);
+		console.log(prevboss);
+		} else {
+			// unknown + 2 bosses
+			thisboss = click_val;
+			var newind;
+//			console.log(click_val+" "+max_avail);
+
+			for(var i=0; i<max_avail; i++){
+				if(avail_bosses[i]===click_val){
+					newind = i;
+//			console.log(i);
+				}
+			}
+			console.log(avail_bosses);
+			console.log(click_val)
+			console.log(newind);
+			
+			if(newind<(max_avail-1)){
+				nextboss = avail_bosses[(newind+1)];
+				if((newind-1)<0){
+					prevboss = avail_bosses[(newind+(max_avail-1))];
+				} else {
+					prevboss = avail_bosses[(newind-1)];
+				}	
+			} else {
+//				console.log("at end of ehjehe");
+				nextboss = 0;
+				prevboss = avail_bosses[(newind-1)];
+				
+			}	
+		console.log(max_avail);
+		console.log(thisboss);
+		console.log(nextboss);
+		console.log(prevboss);
+		}
+
+//		console.log(comp.props.mapstate.bossUsed);
+//		console.log(avail_bosses[thisboss]);
+		
+		if(dir === "left"){
+			// left click
+//			console.log(nextboss);
+			assignBoss(avail_bosses[nextboss], avail_bosses[thisboss], comp.props);
+			comp.clickboxstatechange({
+				value : avail_bosses[nextboss],
+				boss : all_bosses[avail_bosses[nextboss]]
+			});
+		} else {
+			// right click
+			assignBoss(avail_bosses[prevboss], avail_bosses[thisboss], comp.props);
+			comp.clickboxstatechange({
+				value : avail_bosses[prevboss],
+				boss : all_bosses[avail_bosses[prevboss]]
+			});
 		}
 	} else if(comp.state.type === "items"){
 		maxvalue = 9;
@@ -323,6 +913,7 @@ function clickClickbox(e, comp, dir){
 		}
 	}
 }
+*/
 
 // MAP LOGIC
 
@@ -492,9 +1083,11 @@ function clickPortal(comp, e, type){
 			}
 		}
 	} else if (type == "right") {
+		e.preventDefault();
 		// right click
 		try{
-			if(comp.props.state.active_portal.props.zoneid == comp.props.zoneid && comp.props.state.active_portal.props.id == comp.props.id){
+			var delcnx = null;
+			if(comp.props.state.active_portal.props.zoneid == comp.props.zoneid && comp.props.state.active_portal.props.id == comp.props.id && comp.state.connected==="connecting"){
 				comp.props.mapstatechange({
 					isPortalActive : false,
 					active_portal : null
@@ -504,19 +1097,43 @@ function clickPortal(comp, e, type){
 					partner_color : ""
 				});
 			}
-			if(comp.state.connected==="connected"){
-				// get connections from JSON
-				// find cnx same as this portal
-				// change portal state for both portals to unassigned
-				// delete cnx item in array
-				// save to map connections & localstorage
-
-			}
 		} catch (err){
 			console.log("no active portal");
+			console.log(err);
+		}
+		
+		try {
+			if(comp.state.connected==="connected"){
+				var cnx = storageToJSON("connections");
+				if(cnx){
+					if(cnx.length>0){
+						// cnx[i] is individual connections level
+						for(var i=0; i<cnx.length; i++){
+							// cnx[i][j] is each portal in a connection 
+//							console.log(cnx[i]);
+							for(var j=0; j<cnx[i].length; j++){
+								// cnx[i][j][0] is the zone id for a portal
+								// cnx[i][j][1] is the portal id for a portal
+								//	console.log(cnx[i][j]);
+								if(cnx[i][j][0]===comp.props.zoneid && cnx[i][j][1]===comp.props.id){
+									cnx.splice(i, 1);
+									comp.props.mapstatechange({
+										connections : JSON.stringify(cnx)
+									});
+									localStorage.setItem('connections', JSON.stringify(cnx));
+									drawLines();
+									window.location.reload();
+								}
+							}
+						}
+					}
+									
+				}
+			}	
+		} catch (err) {
+				
 		}
 	}
-
 }
 
 function partnerColors(comp){
@@ -611,7 +1228,7 @@ function drawLines(){
 	const ctx = canvas.getContext("2d");
 	canvas.width  = canvas.offsetWidth;
 	canvas.height = canvas.offsetHeight;
-	var cnx = storageToJSON();
+	var cnx = storageToJSON("connections");
 	if(cnx){
 		for(var i=0; i<cnx.length; i++){
 			// all connections loop		
@@ -705,22 +1322,43 @@ function toggleBosses(e, bool){
 
 
 function toggleHidden(e){
+	var firstload = false;
 	var newbool = false;
-	for(var i=0; i<e.target.classList.length; i++){
-		if(e.target.classList[i] === "hidden"){
-			newbool = true;
+//	console.log(e.bool);
+	try{
+		if(e.bool){
+//			console.log("inif");
+			firstload = true;
 		}
+	} catch (err){
+		console.log("not first load");
 	}
-	
-	if(newbool){
-		e.target.classList.remove("hidden");
+
+	if(firstload){
+//		console.log("firstload");
+		if(!e.bool){
+			e.target.classList.remove("hidden");
+		} else {
+			e.target.classList.add("hidden");
+		}
 	} else {
-		e.target.classList.add("hidden");
+		for(var i=0; i<e.target.classList.length; i++){
+			if(e.target.classList[i] === "hidden"){
+				newbool = true;
+			}
+		}
+		if(newbool){
+			e.target.classList.remove("hidden");
+		} else {
+			e.target.classList.add("hidden");
+		}	
 	}
 }
 
 function toggleClass(bool, classname){
 	var items = document.getElementsByClassName(classname);
+	localStorage.setItem(classname+"_toggle", bool);
+
 	if(bool){
 		// Currently YES, turn them OFF
 		for(var i=0; i<items.length; i++){
@@ -731,6 +1369,27 @@ function toggleClass(bool, classname){
 		for(var i=0; i<items.length; i++){
 			items[i].classList.remove("off");
 		}
+	}
+}
+
+function checkToggles(){
+	var labels = localStorage.getItem("label_toggle");
+	var items = localStorage.getItem("items_toggle");
+	var bosses = localStorage.getItem("bosses_toggle");
+	var boolLabels = (labels==="true");
+	var boolItems = (items==="true");
+	var boolBosses = (bosses==="true");
+	var bLabels = document.getElementById("toggleText");
+	var bItems = document.getElementById("toggleItems");
+	var bBosses = document.getElementById("toggleBosses");
+	if(typeof labels==="string"){
+		toggleLabels({target:bLabels, bool: boolLabels}, boolLabels);
+	}
+	if(typeof items==="string"){
+		toggleItems({target:bItems, bool: boolItems}, boolItems);
+	}
+	if(typeof bosses==="string"){
+		toggleBosses({target:bBosses, bool: boolBosses}, boolBosses);
 	}
 }
 
@@ -774,7 +1433,7 @@ function clearHistory(e, comp){
 
 
 function placeSides(){
-	console.log("placing sides");
+//	console.log("placing sides");
 	// 0-4, 5-7, 8-13, 14-15, 16-20, 21-22, 23-26, 27-28, 29, 30, 31
 	var zoneportalkey = [0,5,8,14,16,21,23,27,29,30,31];
 	var zoneportallengths = [5,3,6,2,5,2,4,2,1,1,1];
@@ -804,7 +1463,7 @@ function placeSides(){
 //	console.log(main_portals);
 //	console.log(portals);
 
-	var cnx = storageToJSON();
+	var cnx = storageToJSON("connections");
 	if(cnx){
 		if(cnx.length>0){
 			// cnx[i] is individual connections level
